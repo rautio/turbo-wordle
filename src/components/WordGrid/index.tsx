@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
+import Snackbar from "@mui/material/Snackbar";
+import Modal from "@mui/material/Modal";
+import Box from "@mui/material/Box";
 import WordRow from "../WordRow";
 
 const API_URL = "http://localhost:9001";
@@ -9,6 +12,17 @@ interface Props {
   numTries?: number;
 }
 
+const modalStyle = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
 interface Words extends Array<string> {}
 export enum Result {
   NoMatch = 0,
@@ -42,7 +56,7 @@ const validate = (word: string, correctWord: string) => {
     if (indexInCorrect < 0) {
       results.push(Result.NoMatch);
     } else if (indexInCorrect >= 0) {
-      if (indexInCorrect === i) {
+      if (word[i] === correctWord[i]) {
         results.push(Result.Correct);
       } else {
         results.push(Result.WrongPlacement);
@@ -53,6 +67,8 @@ const validate = (word: string, correctWord: string) => {
 };
 
 export const WordGrid = ({ wordLength = 5, numTries = 6 }: Props) => {
+  const [openWrongWord, setOpenWrongWord] = useState(false);
+  const [won, setWon] = useState(false);
   const [correctWord, setCorrectWord] = useState("");
   const [words, setWords] = useState<Words>(Array(numTries).fill(""));
   const [results, setResults] = useState<Results>(Array(numTries));
@@ -72,14 +88,23 @@ export const WordGrid = ({ wordLength = 5, numTries = 6 }: Props) => {
     } else if (e.keyCode === 13) {
       // Enter key
       if (words[currentRow].length === wordLength && currentRow < numTries) {
-        validateWord(words[currentRow]).then(() => {
-          const newResults = validate(words[currentRow], correctWord);
-          setResults((oldResults) => {
-            oldResults[currentRow] = newResults;
-            return oldResults;
+        validateWord(words[currentRow])
+          .then(() => {
+            const newResults = validate(words[currentRow], correctWord);
+            const allCorrect = newResults.every((r) => r === Result.Correct);
+            setResults((oldResults) => {
+              oldResults[currentRow] = newResults;
+              return oldResults;
+            });
+            if (allCorrect) {
+              setWon(true);
+            } else {
+              setCurrentRow(currentRow + 1);
+            }
+          })
+          .catch(() => {
+            setOpenWrongWord(true);
           });
-          setCurrentRow(currentRow + 1);
-        });
       }
     } else if (e.key.toLowerCase() >= "a" && e.key <= "z") {
       // alpha numeric
@@ -94,6 +119,9 @@ export const WordGrid = ({ wordLength = 5, numTries = 6 }: Props) => {
   }
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
+    if (won) {
+      document.removeEventListener("keydown", handleKeyDown);
+    }
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
@@ -108,13 +136,39 @@ export const WordGrid = ({ wordLength = 5, numTries = 6 }: Props) => {
         console.log(err);
       });
   }, []);
-
+  const reset = () => {
+    fetch(`${API_URL}/random?length=5`)
+      .then((res) => res.json())
+      .then((res) => {
+        setCorrectWord(res.word);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    setWon(false);
+    setWords(Array(numTries).fill(""));
+    setResults(Array(numTries));
+    setCurrentRow(0);
+  };
   useEffect(() => {
     const newWords = Array(numTries).fill("");
     setWords(newWords);
   }, [wordLength, numTries]);
   return (
     <Container maxWidth="sm">
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        message="Unrecognized word"
+        open={openWrongWord}
+        onClose={() => setOpenWrongWord(false)}
+        autoHideDuration={2000}
+      />
+      <Modal open={won} onClose={() => reset()}>
+        <Box sx={modalStyle}>You won!</Box>
+      </Modal>
+      <Modal open={currentRow === numTries} onClose={() => reset()}>
+        <Box sx={modalStyle}>You lost!</Box>
+      </Modal>
       <Stack>
         {words.map((w, i) => (
           <WordRow
