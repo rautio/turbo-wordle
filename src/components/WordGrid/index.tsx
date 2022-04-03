@@ -16,8 +16,6 @@ export enum Result {
 }
 interface Results extends Array<Array<Result>> {}
 
-const CorrectWord = "sound";
-
 const validate = (word: string, correctWord: string) => {
   const results = [];
   for (let i = 0; i < word.length; i++) {
@@ -37,12 +35,12 @@ const validate = (word: string, correctWord: string) => {
 };
 
 export const WordGrid = ({ wordLength = 5, numTries = 6 }: Props) => {
+  const [correctWord, setCorrectWord] = useState("");
   const [words, setWords] = useState<Words>(Array(numTries).fill(""));
   const [results, setResults] = useState<Results>(Array(numTries));
   const [currentRow, setCurrentRow] = useState(0);
 
-  const handleKeyDown = (e: any) => {
-    console.log({ key: e.key, word: words[currentRow], currentRow, words });
+  function handleKeyDown(e: any) {
     if (e.keyCode === 8) {
       // Delete key
       if (words[currentRow].length > 0) {
@@ -55,11 +53,8 @@ export const WordGrid = ({ wordLength = 5, numTries = 6 }: Props) => {
       }
     } else if (e.keyCode === 13) {
       // Enter key
-      if (
-        words[currentRow].length === wordLength &&
-        currentRow < numTries - 1
-      ) {
-        const newResults = validate(words[currentRow], CorrectWord);
+      if (words[currentRow].length === wordLength && currentRow < numTries) {
+        const newResults = validate(words[currentRow], correctWord);
         setResults((oldResults) => {
           oldResults[currentRow] = newResults;
           return oldResults;
@@ -72,25 +67,32 @@ export const WordGrid = ({ wordLength = 5, numTries = 6 }: Props) => {
         setWords((oldWords) => {
           const newWords = [...oldWords];
           newWords[currentRow] += e.key.toLowerCase();
-          console.log({ newWords });
           return newWords;
         });
       }
     }
-  };
+  }
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
   });
+  useEffect(() => {
+    fetch("http://localhost:9001/random?length=5")
+      .then((res) => res.json())
+      .then((res) => {
+        setCorrectWord(res.word);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   useEffect(() => {
     const newWords = Array(numTries).fill("");
     setWords(newWords);
   }, [wordLength, numTries]);
-  //@ts-ignore
-  console.log({ words, results });
   return (
     <Container maxWidth="sm">
       <Stack>
