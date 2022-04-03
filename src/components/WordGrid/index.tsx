@@ -3,6 +3,7 @@ import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import WordRow from "../WordRow";
 
+const API_URL = "http://localhost:9001";
 interface Props {
   wordLength?: number;
   numTries?: number;
@@ -16,6 +17,23 @@ export enum Result {
 }
 interface Results extends Array<Array<Result>> {}
 
+const validateWord = (word: string) => {
+  return new Promise((resolve, reject) => {
+    fetch(`${API_URL}/word/${word}`)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(res.statusText);
+        } else {
+          resolve(res);
+        }
+      })
+      .catch((e) => {
+        reject(e);
+      });
+  });
+};
+
+// TODO: Doesn't work if there are 2 of the same letter
 const validate = (word: string, correctWord: string) => {
   const results = [];
   for (let i = 0; i < word.length; i++) {
@@ -54,12 +72,14 @@ export const WordGrid = ({ wordLength = 5, numTries = 6 }: Props) => {
     } else if (e.keyCode === 13) {
       // Enter key
       if (words[currentRow].length === wordLength && currentRow < numTries) {
-        const newResults = validate(words[currentRow], correctWord);
-        setResults((oldResults) => {
-          oldResults[currentRow] = newResults;
-          return oldResults;
+        validateWord(words[currentRow]).then(() => {
+          const newResults = validate(words[currentRow], correctWord);
+          setResults((oldResults) => {
+            oldResults[currentRow] = newResults;
+            return oldResults;
+          });
+          setCurrentRow(currentRow + 1);
         });
-        setCurrentRow(currentRow + 1);
       }
     } else if (e.key.toLowerCase() >= "a" && e.key <= "z") {
       // alpha numeric
@@ -79,7 +99,7 @@ export const WordGrid = ({ wordLength = 5, numTries = 6 }: Props) => {
     };
   });
   useEffect(() => {
-    fetch("http://localhost:9001/random?length=5")
+    fetch(`${API_URL}/random?length=5`)
       .then((res) => res.json())
       .then((res) => {
         setCorrectWord(res.word);
