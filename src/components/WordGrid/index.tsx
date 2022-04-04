@@ -4,13 +4,9 @@ import Stack from "@mui/material/Stack";
 import Snackbar from "@mui/material/Snackbar";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
+import { useWordLength, useNumTries } from "../../hooks/settings";
+import api from "../../api";
 import WordRow from "../WordRow";
-
-const API_URL = "http://localhost:9001";
-interface Props {
-  wordLength?: number;
-  numTries?: number;
-}
 
 const modalStyle = {
   position: "absolute",
@@ -32,19 +28,7 @@ export enum Result {
 interface Results extends Array<Array<Result>> {}
 
 const validateWord = (word: string) => {
-  return new Promise((resolve, reject) => {
-    fetch(`${API_URL}/word/${word}`)
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(res.statusText);
-        } else {
-          resolve(res);
-        }
-      })
-      .catch((e) => {
-        reject(e);
-      });
-  });
+  return api.get(`/word/${word}`);
 };
 
 // TODO: Should not state mismatch if using several of the same character if it only shows up once
@@ -67,7 +51,10 @@ const validate = (word: string, correctWord: string) => {
   return results;
 };
 
-export const WordGrid = ({ wordLength = 5, numTries = 6 }: Props) => {
+// TODO: Hitting Enter opens the modal each time
+export const WordGrid = () => {
+  const [wordLength] = useWordLength();
+  const numTries = useNumTries();
   const [openWrongWord, setOpenWrongWord] = useState(false);
   const [won, setWon] = useState(false);
   const [correctWord, setCorrectWord] = useState("");
@@ -127,19 +114,9 @@ export const WordGrid = ({ wordLength = 5, numTries = 6 }: Props) => {
       document.removeEventListener("keydown", handleKeyDown);
     };
   });
-  useEffect(() => {
-    fetch(`${API_URL}/random?length=5`)
-      .then((res) => res.json())
-      .then((res) => {
-        setCorrectWord(res.word);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
   const reset = () => {
-    fetch(`${API_URL}/random?length=5`)
-      .then((res) => res.json())
+    api
+      .get(`/random?length=${wordLength}`)
       .then((res) => {
         setCorrectWord(res.word);
       })
@@ -152,9 +129,12 @@ export const WordGrid = ({ wordLength = 5, numTries = 6 }: Props) => {
     setCurrentRow(0);
   };
   useEffect(() => {
-    const newWords = Array(numTries).fill("");
-    setWords(newWords);
+    reset();
+  }, []);
+  useEffect(() => {
+    reset();
   }, [wordLength, numTries]);
+  console.log({ correctWord });
   return (
     <Container maxWidth="sm">
       <Snackbar
