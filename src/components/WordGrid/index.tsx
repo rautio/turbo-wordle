@@ -51,7 +51,6 @@ const validate = (word: string, correctWord: string) => {
   return results;
 };
 
-// TODO: Hitting Enter opens the modal each time
 export const WordGrid = () => {
   const [wordLength] = useWordLength();
   const numTries = useNumTries();
@@ -63,7 +62,9 @@ export const WordGrid = () => {
   const [currentRow, setCurrentRow] = useState(0);
 
   function handleKeyDown(e: any) {
-    e.stopPropagation();
+    // After a user clicks settings the icon will remain focused and also trigger on each
+    // 'Enter' key hit unless prevented here
+    e.preventDefault();
     if (e.keyCode === 8) {
       // Delete key
       if (words[currentRow].length > 0) {

@@ -50,7 +50,6 @@ export const Header = () => {
             aria-label="menu"
             sx={{ mr: 2 }}
             onClick={(e) => {
-              console.log("click!", e);
               setSettingsOpen(!settingsOpen);
             }}
           >
@@ -58,7 +57,12 @@ export const Header = () => {
           </IconButton>
         </Toolbar>
       </AppBar>
-      <Modal open={settingsOpen} onClose={() => setSettingsOpen(false)}>
+      <Modal
+        open={settingsOpen}
+        onClose={() => {
+          setSettingsOpen(false);
+        }}
+      >
         <Box sx={modalStyle}>
           <Settings />
         </Box>
