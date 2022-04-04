@@ -47,7 +47,8 @@ const validateWord = (word: string) => {
   });
 };
 
-// TODO: Doesn't work if there are 2 of the same letter
+// TODO: Should not state mismatch if using several of the same character if it only shows up once
+//   Ex: 'farts' -> Guessing E should only show 1 mismatch/correct not if you guess 'tener'
 const validate = (word: string, correctWord: string) => {
   const results = [];
   for (let i = 0; i < word.length; i++) {
