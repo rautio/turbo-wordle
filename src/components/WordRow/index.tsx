@@ -1,7 +1,5 @@
 import React from "react";
-import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
 import { Result } from "../WordGrid";
 
@@ -20,7 +18,12 @@ export const WordRow = ({ word, wordLength, result }: Props) => {
     ...Array(wordLength - word.length).fill(""),
   ];
   return (
-    <Stack direction="row">
+    <Stack
+      direction="row"
+      sx={{
+        margin: "auto",
+      }}
+    >
       {letters.map((letter, i) => (
         <Paper
           key={i}

@@ -49,8 +49,8 @@ export const Header = () => {
             color="inherit"
             aria-label="menu"
             sx={{ mr: 2 }}
-            onClick={() => {
-              console.log("click!");
+            onClick={(e) => {
+              console.log("click!", e);
               setSettingsOpen(!settingsOpen);
             }}
           >

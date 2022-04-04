@@ -63,6 +63,7 @@ export const WordGrid = () => {
   const [currentRow, setCurrentRow] = useState(0);
 
   function handleKeyDown(e: any) {
+    e.stopPropagation();
     if (e.keyCode === 8) {
       // Delete key
       if (words[currentRow].length > 0) {
@@ -115,6 +116,10 @@ export const WordGrid = () => {
     };
   });
   const reset = () => {
+    setWon(false);
+    setWords(Array(numTries).fill(""));
+    setResults(Array(numTries));
+    setCurrentRow(0);
     api
       .get(`/random?length=${wordLength}`)
       .then((res) => {
@@ -123,14 +128,7 @@ export const WordGrid = () => {
       .catch((err) => {
         console.log(err);
       });
-    setWon(false);
-    setWords(Array(numTries).fill(""));
-    setResults(Array(numTries));
-    setCurrentRow(0);
   };
-  useEffect(() => {
-    reset();
-  }, []);
   useEffect(() => {
     reset();
   }, [wordLength, numTries]);
@@ -154,7 +152,7 @@ export const WordGrid = () => {
         {words.map((w, i) => (
           <WordRow
             key={i}
-            word={w}
+            word={w.length <= wordLength ? w : ""}
             wordLength={wordLength}
             result={results[i]}
           />
