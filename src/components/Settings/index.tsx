@@ -2,14 +2,33 @@ import React from "react";
 import MenuItem from "@mui/material/MenuItem";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
+import Switch from "@mui/material/Switch";
+import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import Select from "@mui/material/Select";
-import { useWordLength } from "../../hooks/settings";
+import { useWordLength, useTheme } from "../../hooks/settings";
+import { Theme } from "../../contexts/settings";
 
 export const Settings = () => {
   const [wordLength, setWordLength] = useWordLength();
+  const [theme, setTheme] = useTheme();
   return (
     <>
-      <FormControl fullWidth>
+      <FormGroup>
+        <FormControlLabel
+          control={
+            <Switch
+              value={theme}
+              checked={theme === Theme.dark}
+              onChange={() => {
+                setTheme(theme === Theme.dark ? Theme.light : Theme.dark);
+              }}
+            />
+          }
+          label="Dark Theme"
+        />
+      </FormGroup>
+      <FormControl size="medium">
         <InputLabel id="word-Length-select-label">Word Length</InputLabel>
         <Select
           labelId="word-length-select-label"

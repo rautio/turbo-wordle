@@ -2,7 +2,7 @@ import React from "react";
 import Button from "@mui/material/Button";
 
 interface KeyProps {
-  text: string;
+  text: string | React.ReactNode;
   onClick: () => void;
   used?: boolean;
   sx?: any;

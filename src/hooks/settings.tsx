@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { SettingsContext } from "../contexts/settings";
+import { SettingsContext, Theme } from "../contexts/settings";
 
 export const useWordLength = (): [number, (length: number) => void] => {
   const { wordLength, setWordLength } = useContext(SettingsContext);
@@ -9,4 +9,9 @@ export const useWordLength = (): [number, (length: number) => void] => {
 export const useNumTries = (): number => {
   const { numTries } = useContext(SettingsContext);
   return numTries;
+};
+
+export const useTheme = (): [Theme, (theme: Theme) => void] => {
+  const { theme, setTheme } = useContext(SettingsContext);
+  return [theme, setTheme];
 };

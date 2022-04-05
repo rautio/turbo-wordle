@@ -1,6 +1,7 @@
 import React from "react";
 import Stack from "@mui/material/Stack";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import Backspace from "@mui/icons-material/Backspace";
 import Key from "./Key";
 interface Props {
   usedLetters: string[];
@@ -24,21 +25,21 @@ export const Keyboard = ({
   // @ts-ignore
   const mediumScreen = useMediaQuery((theme) => theme.breakpoints.down("md"));
   const keySx = {
-    margin: "3px",
-    minWidth: "60px",
-    minHeight: "44px",
+    margin: "2px",
+    minWidth: "62px",
+    minHeight: "56px",
   };
   let nonLetterMinWidth = "75px";
   let nonLetterPadding = "6px 24px 6px 24px";
   if (mediumScreen) {
-    keySx.minWidth = "40px";
+    keySx.minWidth = "42px";
     nonLetterMinWidth = "65px";
     nonLetterPadding = "6px 12px 6px 12px";
   }
   if (smallScreen) {
     // @ts-ignore
     keySx.padding = "6px";
-    keySx.minWidth = "30px";
+    keySx.minWidth = "32px";
     nonLetterMinWidth = "55px";
     nonLetterPadding = "6px";
   }
@@ -104,7 +105,7 @@ export const Keyboard = ({
           />
         ))}
         <Key
-          text="delete"
+          text={<Backspace />}
           onClick={onDelete}
           sx={{
             ...keySx,
