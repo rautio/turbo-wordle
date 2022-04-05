@@ -1,6 +1,5 @@
 import React from "react";
 import Stack from "@mui/material/Stack";
-import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import useMediaQuery from "@mui/material/useMediaQuery";
 

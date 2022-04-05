@@ -145,6 +145,7 @@ export const WordGrid = () => {
   };
   useEffect(() => {
     reset();
+    // eslint-disable-next-line
   }, [wordLength, numTries]);
   return (
     <>

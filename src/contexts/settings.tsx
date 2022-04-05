@@ -1,4 +1,4 @@
-import React, { FC, createContext, useState } from "react";
+import { FC, createContext, useState } from "react";
 import { ThemeProvider } from "@mui/material";
 import theme from "../theme";
 export interface Settings {
