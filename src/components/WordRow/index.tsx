@@ -31,7 +31,7 @@ const fontSizes = {
 };
 
 // Incorrect, Wrong Placement, Correct
-const bgColors = ["none", "orange", "green"];
+const bgColors = ["rgba(0, 0, 0, 0.3)", "orange", "green"];
 
 export const WordRow = ({ word, wordLength, result }: Props) => {
   const letters = [
@@ -62,6 +62,7 @@ export const WordRow = ({ word, wordLength, result }: Props) => {
             textAlign: "center",
             fontSize,
             textTransform: "uppercase",
+            borderColor: `rgba(0, 0, 0, ${letter ? "0.3" : "0.12"})`,
             backgroundColor:
               result && result[i] in bgColors ? bgColors[result[i]] : "none",
           }}

@@ -1,34 +1,13 @@
 import React from "react";
 import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
 import useMediaQuery from "@mui/material/useMediaQuery";
-
+import Key from "./Key";
 interface Props {
   usedLetters: string[];
   onDelete: () => void;
   onEnter: () => void;
   onLetter: (letter: string) => void;
 }
-
-interface KeyProps {
-  text: string;
-  onClick: () => void;
-  used?: boolean;
-  sx?: any;
-}
-
-export const Key = ({ text, onClick, used = false, sx }: KeyProps) => {
-  return (
-    <Button
-      variant="contained"
-      onClick={onClick}
-      color={used ? "secondary" : "primary"}
-      sx={sx}
-    >
-      {text}
-    </Button>
-  );
-};
 
 const firstRow = ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"];
 const secondRow = ["a", "s", "d", "f", "g", "h", "j", "k", "l"];
@@ -107,8 +86,8 @@ export const Keyboard = ({
         }}
       >
         <Key
-          text="delete"
-          onClick={onDelete}
+          text="enter"
+          onClick={onEnter}
           sx={{
             ...keySx,
             minWidth: nonLetterMinWidth,
@@ -125,8 +104,8 @@ export const Keyboard = ({
           />
         ))}
         <Key
-          text="enter"
-          onClick={onEnter}
+          text="delete"
+          onClick={onDelete}
           sx={{
             ...keySx,
             minWidth: nonLetterMinWidth,

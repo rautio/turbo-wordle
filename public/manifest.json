@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Turbo World",
+  "name": "Spin on the popular Wordle game",
   "icons": [
     {
       "src": "favicon.ico",
