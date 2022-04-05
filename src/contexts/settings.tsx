@@ -1,4 +1,4 @@
-import { FC, createContext, useState } from "react";
+import { FC, createContext, useState, useEffect } from "react";
 import { ThemeProvider } from "@mui/material"; // @ts-ignore
 import { createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -40,11 +40,34 @@ const numTriesMap = {
 export const SettingsContext = createContext(defaultSettings);
 
 export const SettingsProvider: FC = ({ children }) => {
-  const [wordLength, setWordLength] = useState<number>(DEFAULT_WORD_LENGTH);
-  const [theme, setTheme] = useState<Theme>(Theme.dark);
+  const storedSettings = localStorage.getItem("turbo-wordle-settings");
+  const initSettings = { wordLength: DEFAULT_WORD_LENGTH, theme: Theme.dark };
+  // Hydrate settings from local storage
+  if (storedSettings) {
+    const parsed = JSON.parse(storedSettings);
+    if ("theme" in parsed && Object.values(Theme).includes(parsed.theme)) {
+      initSettings.theme = parsed.theme;
+    }
+    if (
+      "wordLength" in parsed &&
+      Number(parsed.wordLength) >= 3 &&
+      Number(parsed.wordLength <= 9)
+    ) {
+      initSettings.wordLength = parsed.wordLength;
+    }
+  }
+  const [wordLength, setWordLength] = useState<number>(initSettings.wordLength);
+  const [theme, setTheme] = useState<Theme>(initSettings.theme);
   const numTries =
     // @ts-ignore
     (wordLength in numTriesMap && numTriesMap[wordLength.toString()]) || 5;
+  useEffect(() => {
+    // Store settings in local storage for persistence
+    localStorage.setItem(
+      "turbo-wordle-settings",
+      JSON.stringify({ theme, wordLength })
+    );
+  }, [wordLength, theme]);
   const settingState: Settings = {
     numTries,
     wordLength,
