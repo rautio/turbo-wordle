@@ -161,7 +161,7 @@ export const WordGrid = () => {
           <Box sx={modalStyle}>You won!</Box>
         </Modal>
         <Modal open={currentRow === numTries} onClose={() => reset()}>
-          <Box sx={modalStyle}>You lost!</Box>
+          <Box sx={modalStyle}>The word was: {correctWord}</Box>
         </Modal>
         <Stack>
           {words.map((w, i) => (
