@@ -25,7 +25,7 @@ export const Header = () => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar position="static" sx={{ minHeight: "48px" }}>
         <Toolbar>
           <IconButton
             size="large"
@@ -37,7 +37,7 @@ export const Header = () => {
             <MenuIcon />
           </IconButton>
           <Typography
-            variant="h6"
+            variant="h4"
             component="div"
             sx={{ flexGrow: 1, textAlign: "center" }}
           >

@@ -1,5 +1,6 @@
 import React, { FC, createContext, useState } from "react";
-
+import { ThemeProvider } from "@mui/material";
+import theme from "../theme";
 export interface Settings {
   wordLength: number;
   setWordLength: (length: number) => void;
@@ -41,7 +42,7 @@ export const SettingsProvider: FC = ({ children }) => {
   return (
     // @ts-ignore
     <SettingsContext.Provider value={settingState}>
-      {children}
+      <ThemeProvider theme={theme}>{children}</ThemeProvider>
     </SettingsContext.Provider>
   );
 };

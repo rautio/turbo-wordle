@@ -9,6 +9,27 @@ interface Props {
   wordLength: number;
 }
 
+const boxHeights = {
+  // wordLength: height in pixels
+  "3": 80,
+  "4": 70,
+  "5": 60,
+  "6": 55,
+  "7": 50,
+  "8": 45,
+  "9": 40,
+};
+
+const fontSizes = {
+  "3": "xxx-large",
+  "4": "xx-large",
+  "5": "xx-large",
+  "6": "xx-large",
+  "7": "x-large",
+  "8": "x-large",
+  "9": "large",
+};
+
 // Incorrect, Wrong Placement, Correct
 const bgColors = ["none", "orange", "green"];
 
@@ -17,6 +38,10 @@ export const WordRow = ({ word, wordLength, result }: Props) => {
     ...word.split(""),
     ...Array(wordLength - word.length).fill(""),
   ];
+  // @ts-ignore
+  const height = boxHeights[wordLength.toString()] || 30;
+  // @ts-ignore
+  const fontSize = fontSizes[wordLength.toString()] || "large";
   return (
     <Stack
       direction="row"
@@ -30,11 +55,12 @@ export const WordRow = ({ word, wordLength, result }: Props) => {
           variant="outlined"
           square
           sx={{
-            width: 100,
-            height: 100,
-            lineHeight: "100px",
+            margin: "2px",
+            width: height,
+            height,
+            lineHeight: `${height}px`,
             textAlign: "center",
-            fontSize: "xxx-large",
+            fontSize,
             textTransform: "uppercase",
             backgroundColor:
               result && result[i] in bgColors ? bgColors[result[i]] : "none",

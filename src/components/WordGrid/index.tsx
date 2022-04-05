@@ -4,6 +4,7 @@ import Stack from "@mui/material/Stack";
 import Snackbar from "@mui/material/Snackbar";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
+import Keyboard from "../Keyboard";
 import { useWordLength, useNumTries } from "../../hooks/settings";
 import api from "../../api";
 import WordRow from "../WordRow";
@@ -58,55 +59,67 @@ export const WordGrid = () => {
   const [won, setWon] = useState(false);
   const [correctWord, setCorrectWord] = useState("");
   const [words, setWords] = useState<Words>(Array(numTries).fill(""));
+  const [usedLetters, setUsedLetters] = useState<string[]>([]);
   const [results, setResults] = useState<Results>(Array(numTries));
   const [currentRow, setCurrentRow] = useState(0);
 
-  function handleKeyDown(e: any) {
+  const onDelete = () => {
+    if (words[currentRow].length > 0) {
+      setWords((oldWords) => {
+        const newWords = [...oldWords];
+        const curWord = newWords[currentRow];
+        newWords[currentRow] = curWord.substring(0, curWord.length - 1);
+        return newWords;
+      });
+    }
+  };
+  const onEnter = () => {
+    if (words[currentRow].length === wordLength && currentRow < numTries) {
+      validateWord(words[currentRow])
+        .then(() => {
+          const newResults = validate(words[currentRow], correctWord);
+          const allCorrect = newResults.every((r) => r === Result.Correct);
+          setResults((oldResults) => {
+            oldResults[currentRow] = newResults;
+            return oldResults;
+          });
+          setUsedLetters((oldWords) => [
+            ...oldWords,
+            ...words[currentRow].split(""),
+          ]);
+          if (allCorrect) {
+            setWon(true);
+          } else {
+            setCurrentRow(currentRow + 1);
+          }
+        })
+        .catch(() => {
+          setOpenWrongWord(true);
+        });
+    }
+  };
+  const onLetter = (letter: string) => {
+    if (words[currentRow].length < wordLength) {
+      setWords((oldWords) => {
+        const newWords = [...oldWords];
+        newWords[currentRow] += letter;
+        return newWords;
+      });
+    }
+  };
+
+  const handleKeyDown = (e: any) => {
     // After a user clicks settings the icon will remain focused and also trigger on each
     // 'Enter' key hit unless prevented here
     e.preventDefault();
     if (e.keyCode === 8) {
-      // Delete key
-      if (words[currentRow].length > 0) {
-        setWords((oldWords) => {
-          const newWords = [...oldWords];
-          const curWord = newWords[currentRow];
-          newWords[currentRow] = curWord.substring(0, curWord.length - 1);
-          return newWords;
-        });
-      }
+      onDelete();
     } else if (e.keyCode === 13) {
-      // Enter key
-      if (words[currentRow].length === wordLength && currentRow < numTries) {
-        validateWord(words[currentRow])
-          .then(() => {
-            const newResults = validate(words[currentRow], correctWord);
-            const allCorrect = newResults.every((r) => r === Result.Correct);
-            setResults((oldResults) => {
-              oldResults[currentRow] = newResults;
-              return oldResults;
-            });
-            if (allCorrect) {
-              setWon(true);
-            } else {
-              setCurrentRow(currentRow + 1);
-            }
-          })
-          .catch(() => {
-            setOpenWrongWord(true);
-          });
-      }
-    } else if (e.key.toLowerCase() >= "a" && e.key <= "z") {
-      // alpha numeric
-      if (words[currentRow].length < wordLength) {
-        setWords((oldWords) => {
-          const newWords = [...oldWords];
-          newWords[currentRow] += e.key.toLowerCase();
-          return newWords;
-        });
-      }
+      onEnter();
+    } else if (e.key.toLowerCase() >= "a" && e.key.toLowerCase() <= "z") {
+      onLetter(e.key.toLowerCase());
     }
-  }
+  };
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
     if (won) {
@@ -135,31 +148,41 @@ export const WordGrid = () => {
   }, [wordLength, numTries]);
   console.log({ correctWord });
   return (
-    <Container maxWidth="sm">
-      <Snackbar
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        message="Unrecognized word"
-        open={openWrongWord}
-        onClose={() => setOpenWrongWord(false)}
-        autoHideDuration={2000}
-      />
-      <Modal open={won} onClose={() => reset()}>
-        <Box sx={modalStyle}>You won!</Box>
-      </Modal>
-      <Modal open={currentRow === numTries} onClose={() => reset()}>
-        <Box sx={modalStyle}>You lost!</Box>
-      </Modal>
-      <Stack>
-        {words.map((w, i) => (
-          <WordRow
-            key={i}
-            word={w.length <= wordLength ? w : ""}
-            wordLength={wordLength}
-            result={results[i]}
-          />
-        ))}
-      </Stack>
-    </Container>
+    <>
+      <Container maxWidth="sm" sx={{ marginTop: "40px" }}>
+        <Snackbar
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          message="Unrecognized word"
+          open={openWrongWord}
+          onClose={() => setOpenWrongWord(false)}
+          autoHideDuration={2000}
+        />
+        <Modal open={won} onClose={() => reset()}>
+          <Box sx={modalStyle}>You won!</Box>
+        </Modal>
+        <Modal open={currentRow === numTries} onClose={() => reset()}>
+          <Box sx={modalStyle}>You lost!</Box>
+        </Modal>
+        <Stack>
+          {words.map((w, i) => (
+            <WordRow
+              key={i}
+              word={w.length <= wordLength ? w : ""}
+              wordLength={wordLength}
+              result={results[i]}
+            />
+          ))}
+        </Stack>
+      </Container>
+      <Container maxWidth="md" sx={{ marginTop: "40px" }}>
+        <Keyboard
+          onDelete={onDelete}
+          onEnter={onEnter}
+          onLetter={onLetter}
+          usedLetters={usedLetters}
+        />
+      </Container>
+    </>
   );
 };
 

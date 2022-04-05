@@ -27,9 +27,6 @@ export const Settings = () => {
           <MenuItem value={7}>Seven</MenuItem>
           <MenuItem value={8}>Eight</MenuItem>
           <MenuItem value={9}>Nine</MenuItem>
-          <MenuItem value={10}>Ten</MenuItem>
-          <MenuItem value={11}>Eleven</MenuItem>
-          <MenuItem value={12}>Twelve</MenuItem>
         </Select>
       </FormControl>
     </>
