@@ -134,6 +134,7 @@ export const WordGrid = () => {
     setWords(Array(numTries).fill(""));
     setResults(Array(numTries));
     setCurrentRow(0);
+    setUsedLetters([]);
     api
       .get(`/random?length=${wordLength}`)
       .then((res) => {
