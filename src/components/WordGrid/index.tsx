@@ -4,6 +4,7 @@ import Stack from "@mui/material/Stack";
 import Snackbar from "@mui/material/Snackbar";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import Keyboard from "../Keyboard";
 import { useWordLength, useNumTries } from "../../hooks/settings";
 import api from "../../api";
@@ -148,9 +149,14 @@ export const WordGrid = () => {
     reset();
     // eslint-disable-next-line
   }, [wordLength, numTries]);
+  // @ts-ignore
+  const smallScreen = useMediaQuery((theme) => theme.breakpoints.down("sm"));
   return (
     <>
-      <Container maxWidth="sm" sx={{ marginTop: "40px" }}>
+      <Container
+        maxWidth="sm"
+        sx={{ marginTop: smallScreen ? "10px" : "40px" }}
+      >
         <Snackbar
           anchorOrigin={{ vertical: "top", horizontal: "center" }}
           message="Unrecognized word"
@@ -175,7 +181,10 @@ export const WordGrid = () => {
           ))}
         </Stack>
       </Container>
-      <Container maxWidth="md" sx={{ marginTop: "40px" }}>
+      <Container
+        maxWidth="md"
+        sx={{ marginTop: smallScreen ? "10px" : "40px" }}
+      >
         <Keyboard
           onDelete={onDelete}
           onEnter={onEnter}

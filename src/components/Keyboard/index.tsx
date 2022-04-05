@@ -14,26 +14,10 @@ interface KeyProps {
   text: string;
   onClick: () => void;
   used?: boolean;
+  sx?: any;
 }
 
-export const Key = ({ text, onClick, used = false }: KeyProps) => {
-  // @ts-ignore
-  const smallScreen = useMediaQuery((theme) => theme.breakpoints.down("sm"));
-  // @ts-ignore
-  const mediumScreen = useMediaQuery((theme) => theme.breakpoints.down("md"));
-  const sx = {
-    margin: "3px",
-    minWidth: "60px",
-    minHeight: "44px",
-  };
-  if (mediumScreen) {
-    sx.minWidth = "40px";
-  }
-  if (smallScreen) {
-    // @ts-ignore
-    sx.padding = "6px";
-    sx.minWidth = "30px";
-  }
+export const Key = ({ text, onClick, used = false, sx }: KeyProps) => {
   return (
     <Button
       variant="contained"
@@ -49,12 +33,36 @@ export const Key = ({ text, onClick, used = false }: KeyProps) => {
 const firstRow = ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"];
 const secondRow = ["a", "s", "d", "f", "g", "h", "j", "k", "l"];
 const thirdRow = ["z", "x", "c", "v", "b", "n", "m"];
+
 export const Keyboard = ({
   usedLetters,
   onDelete,
   onEnter,
   onLetter,
 }: Props) => {
+  // @ts-ignore
+  const smallScreen = useMediaQuery((theme) => theme.breakpoints.down("sm"));
+  // @ts-ignore
+  const mediumScreen = useMediaQuery((theme) => theme.breakpoints.down("md"));
+  const keySx = {
+    margin: "3px",
+    minWidth: "60px",
+    minHeight: "44px",
+  };
+  let nonLetterMinWidth = "75px";
+  let nonLetterPadding = "6px 24px 6px 24px";
+  if (mediumScreen) {
+    keySx.minWidth = "40px";
+    nonLetterMinWidth = "65px";
+    nonLetterPadding = "6px 12px 6px 12px";
+  }
+  if (smallScreen) {
+    // @ts-ignore
+    keySx.padding = "6px";
+    keySx.minWidth = "30px";
+    nonLetterMinWidth = "55px";
+    nonLetterPadding = "6px";
+  }
   return (
     <div>
       <Stack
@@ -70,6 +78,7 @@ export const Keyboard = ({
             text={letter}
             onClick={() => onLetter(letter)}
             used={usedLetters.indexOf(letter) > -1}
+            sx={keySx}
           />
         ))}
       </Stack>
@@ -86,6 +95,7 @@ export const Keyboard = ({
             text={letter}
             onClick={() => onLetter(letter)}
             used={usedLetters.indexOf(letter) > -1}
+            sx={keySx}
           />
         ))}
       </Stack>
@@ -96,16 +106,33 @@ export const Keyboard = ({
           alignItems: "center",
         }}
       >
-        <Key text="enter" onClick={onEnter} />
+        <Key
+          text="delete"
+          onClick={onDelete}
+          sx={{
+            ...keySx,
+            minWidth: nonLetterMinWidth,
+            padding: nonLetterPadding,
+          }}
+        />
         {thirdRow.map((letter) => (
           <Key
             key={letter}
             text={letter}
             onClick={() => onLetter(letter)}
             used={usedLetters.indexOf(letter) > -1}
+            sx={keySx}
           />
         ))}
-        <Key text="delete" onClick={onDelete} />
+        <Key
+          text="enter"
+          onClick={onEnter}
+          sx={{
+            ...keySx,
+            minWidth: nonLetterMinWidth,
+            padding: nonLetterPadding,
+          }}
+        />
       </Stack>
     </div>
   );
