@@ -146,7 +146,6 @@ export const WordGrid = () => {
   useEffect(() => {
     reset();
   }, [wordLength, numTries]);
-  console.log({ correctWord });
   return (
     <>
       <Container maxWidth="sm" sx={{ marginTop: "40px" }}>

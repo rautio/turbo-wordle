@@ -38,7 +38,6 @@ export const SettingsProvider: FC = ({ children }) => {
     wordLength,
     setWordLength,
   };
-  console.log({ ...settingState });
   return (
     // @ts-ignore
     <SettingsContext.Provider value={settingState}>

@@ -22,7 +22,6 @@ export const Key = ({ text, onClick, used = false }: KeyProps) => {
   const smallScreen = useMediaQuery((theme) => theme.breakpoints.down("sm"));
   // @ts-ignore
   const mediumScreen = useMediaQuery((theme) => theme.breakpoints.down("md"));
-  console.log({ smallScreen, mediumScreen });
   const sx = {
     margin: "3px",
     minWidth: "60px",
@@ -48,16 +47,15 @@ export const Key = ({ text, onClick, used = false }: KeyProps) => {
   );
 };
 
+const firstRow = ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"];
+const secondRow = ["a", "s", "d", "f", "g", "h", "j", "k", "l"];
+const thirdRow = ["z", "x", "c", "v", "b", "n", "m"];
 export const Keyboard = ({
   usedLetters,
   onDelete,
   onEnter,
   onLetter,
 }: Props) => {
-  console.log({ usedLetters });
-  const firstRow = ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"];
-  const secondRow = ["a", "s", "d", "f", "g", "h", "j", "k", "l"];
-  const thirdRow = ["z", "x", "c", "v", "b", "n", "m"];
   return (
     <div>
       <Stack

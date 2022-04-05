@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:9001";
+const API_URL = "https://turbo-words-api.herokuapp.com";
 
 export const api = {
   get: (endpoint: string): Promise<any> =>
