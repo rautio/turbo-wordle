@@ -1,6 +1,7 @@
 import React from "react";
 import Stack from "@mui/material/Stack";
 import Paper from "@mui/material/Paper";
+import { useTheme } from "@mui/material";
 import { Result } from "../WordGrid";
 
 interface Props {
@@ -30,10 +31,17 @@ const fontSizes = {
   "9": "large",
 };
 
-// Incorrect, Wrong Placement, Correct
-const bgColors = ["rgba(0, 0, 0, 0.3)", "orange", "green"];
-
 export const WordRow = ({ word, wordLength, result }: Props) => {
+  const theme = useTheme();
+  console.log({ theme });
+  // Incorrect, Wrong Placement, Correct
+  const bgColors = [
+    "rgba(0, 0, 0, 0.3)",
+    theme.palette.warning.main,
+    theme.palette.success.main,
+    // "orange",
+    // "green",
+  ];
   const letters = [
     ...word.split(""),
     ...Array(wordLength - word.length).fill(""),

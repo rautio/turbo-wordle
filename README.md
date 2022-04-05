@@ -1,5 +1,7 @@
 # Turbo Wordle
 
+[Live Demo](https://turbo-wordle.netlify.app/)
+
 A spin on the popular [Wordle](https://www.nytimes.com/games/wordle/index.html) game owned by NY Times and created by Josh Wardle.
 
 ## Getting Started

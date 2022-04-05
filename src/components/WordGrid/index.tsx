@@ -61,6 +61,7 @@ export const WordGrid = () => {
   const [correctWord, setCorrectWord] = useState("");
   const [words, setWords] = useState<Words>(Array(numTries).fill(""));
   const [usedLetters, setUsedLetters] = useState<string[]>([]);
+  const [correctLetters, setCorrectLetters] = useState<string[]>([]);
   const [results, setResults] = useState<Results>(Array(numTries));
   const [currentRow, setCurrentRow] = useState(0);
 
@@ -79,13 +80,21 @@ export const WordGrid = () => {
       validateWord(words[currentRow])
         .then(() => {
           const newResults = validate(words[currentRow], correctWord);
+          let correctLetters: string[] = [];
           const allCorrect = newResults.every((r) => r === Result.Correct);
+          for (let i = 0; i < newResults.length; i++) {
+            if (newResults[i] === Result.Correct) {
+              correctLetters.push(words[currentRow][i]);
+            }
+          }
           setResults((oldResults) => {
             oldResults[currentRow] = newResults;
             return oldResults;
           });
-          setUsedLetters((oldWords) => [
-            ...oldWords,
+          // No need to remove duplicates
+          setCorrectLetters((oldLetters) => [...oldLetters, ...correctLetters]);
+          setUsedLetters((oldLetters) => [
+            ...oldLetters,
             ...words[currentRow].split(""),
           ]);
           if (allCorrect) {
@@ -136,6 +145,7 @@ export const WordGrid = () => {
     setResults(Array(numTries));
     setCurrentRow(0);
     setUsedLetters([]);
+    setCorrectLetters([]);
     api
       .get(`/random?length=${wordLength}`)
       .then((res) => {
@@ -190,6 +200,7 @@ export const WordGrid = () => {
           onEnter={onEnter}
           onLetter={onLetter}
           usedLetters={usedLetters}
+          correctLetters={correctLetters}
         />
       </Container>
     </>

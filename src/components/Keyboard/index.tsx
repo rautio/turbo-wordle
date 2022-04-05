@@ -5,6 +5,7 @@ import Backspace from "@mui/icons-material/Backspace";
 import Key from "./Key";
 interface Props {
   usedLetters: string[];
+  correctLetters: string[];
   onDelete: () => void;
   onEnter: () => void;
   onLetter: (letter: string) => void;
@@ -16,6 +17,7 @@ const thirdRow = ["z", "x", "c", "v", "b", "n", "m"];
 
 export const Keyboard = ({
   usedLetters,
+  correctLetters,
   onDelete,
   onEnter,
   onLetter,
@@ -58,6 +60,7 @@ export const Keyboard = ({
             text={letter}
             onClick={() => onLetter(letter)}
             used={usedLetters.indexOf(letter) > -1}
+            correct={correctLetters.indexOf(letter) > -1}
             sx={keySx}
           />
         ))}
@@ -75,6 +78,7 @@ export const Keyboard = ({
             text={letter}
             onClick={() => onLetter(letter)}
             used={usedLetters.indexOf(letter) > -1}
+            correct={correctLetters.indexOf(letter) > -1}
             sx={keySx}
           />
         ))}
@@ -101,6 +105,7 @@ export const Keyboard = ({
             text={letter}
             onClick={() => onLetter(letter)}
             used={usedLetters.indexOf(letter) > -1}
+            correct={correctLetters.indexOf(letter) > -1}
             sx={keySx}
           />
         ))}
