@@ -57,6 +57,7 @@ export const WordGrid = () => {
   const [wordLength] = useWordLength();
   const numTries = useNumTries();
   const [openWrongWord, setOpenWrongWord] = useState(false);
+  const [notEnoughLetters, setNotEnoughLetters] = useState(false);
   const [won, setWon] = useState(false);
   const [correctWord, setCorrectWord] = useState("");
   const [words, setWords] = useState<Words>(Array(numTries).fill(""));
@@ -106,6 +107,8 @@ export const WordGrid = () => {
         .catch(() => {
           setOpenWrongWord(true);
         });
+    } else if (words[currentRow].length < wordLength) {
+      setNotEnoughLetters(true);
     }
   };
   const onLetter = (letter: string) => {
@@ -175,6 +178,19 @@ export const WordGrid = () => {
           message="Unrecognized word"
           open={openWrongWord}
           onClose={() => setOpenWrongWord(false)}
+          autoHideDuration={2000}
+          sx={{
+            marginTop: "120px",
+          }}
+        />
+        <Snackbar
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+          message="Not enough letters"
+          open={notEnoughLetters}
+          onClose={() => setNotEnoughLetters(false)}
           autoHideDuration={2000}
           sx={{
             marginTop: "120px",
