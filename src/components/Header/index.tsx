@@ -7,14 +7,16 @@ import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import SettingsIcon from "@mui/icons-material/Settings";
 import MenuIcon from "@mui/icons-material/Menu";
+import HelpIcon from "@mui/icons-material/HelpOutline";
 import Settings from "../Settings";
+import HowToPlay from "../HowToPlay";
 
 const modalStyle = {
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 400,
+  minWidth: "360px",
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
@@ -23,6 +25,7 @@ const modalStyle = {
 
 export const Header = () => {
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [howToPlayOpen, setHowToPlayOpen] = useState(false);
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" sx={{ minHeight: "48px" }}>
@@ -36,6 +39,18 @@ export const Header = () => {
           >
             <MenuIcon />
           </IconButton>
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            sx={{ mr: 2 }}
+            onClick={() => {
+              setHowToPlayOpen(true);
+            }}
+          >
+            <HelpIcon />
+          </IconButton>
           <Typography
             variant="h4"
             component="div"
@@ -48,9 +63,9 @@ export const Header = () => {
             edge="start"
             color="inherit"
             aria-label="menu"
-            sx={{ mr: 2 }}
-            onClick={(e) => {
-              setSettingsOpen(!settingsOpen);
+            sx={{ mr: 2, marginLeft: "48px" }}
+            onClick={() => {
+              setSettingsOpen(true);
             }}
           >
             <SettingsIcon />
@@ -65,6 +80,16 @@ export const Header = () => {
       >
         <Box sx={modalStyle}>
           <Settings />
+        </Box>
+      </Modal>
+      <Modal
+        open={howToPlayOpen}
+        onClose={() => {
+          setHowToPlayOpen(false);
+        }}
+      >
+        <Box sx={modalStyle}>
+          <HowToPlay />
         </Box>
       </Modal>
     </Box>

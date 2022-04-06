@@ -168,11 +168,17 @@ export const WordGrid = () => {
         sx={{ marginTop: smallScreen ? "10px" : "40px" }}
       >
         <Snackbar
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
           message="Unrecognized word"
           open={openWrongWord}
           onClose={() => setOpenWrongWord(false)}
           autoHideDuration={2000}
+          sx={{
+            marginTop: "120px",
+          }}
         />
         <Modal open={won} onClose={() => reset()}>
           <Box sx={modalStyle}>You won!</Box>

@@ -1,6 +1,7 @@
 import React from "react";
 import MenuItem from "@mui/material/MenuItem";
 import InputLabel from "@mui/material/InputLabel";
+import Typography from "@mui/material/Typography";
 import FormControl from "@mui/material/FormControl";
 import Switch from "@mui/material/Switch";
 import FormGroup from "@mui/material/FormGroup";
@@ -14,6 +15,7 @@ export const Settings = () => {
   const [theme, setTheme] = useTheme();
   return (
     <>
+      <Typography variant="h6">Settings</Typography>
       <FormGroup>
         <FormControlLabel
           control={
