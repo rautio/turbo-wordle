@@ -4,6 +4,7 @@ import Stack from "@mui/material/Stack";
 import Snackbar from "@mui/material/Snackbar";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
+import { Theme } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Keyboard from "../Keyboard";
 import { useWordLength, useNumTries } from "../../hooks/settings";
@@ -122,12 +123,12 @@ export const WordGrid = () => {
   };
 
   const handleKeyDown = (e: any) => {
-    // After a user clicks settings the icon will remain focused and also trigger on each
-    // 'Enter' key hit unless prevented here
-    e.preventDefault();
     if (e.keyCode === 8) {
       onDelete();
     } else if (e.keyCode === 13) {
+      // After a user clicks settings the icon will remain focused and also trigger on each
+      // 'Enter' key hit unless prevented here
+      e.preventDefault();
       onEnter();
     } else if (e.key.toLowerCase() >= "a" && e.key.toLowerCase() <= "z") {
       onLetter(e.key.toLowerCase());
@@ -162,8 +163,9 @@ export const WordGrid = () => {
     reset();
     // eslint-disable-next-line
   }, [wordLength, numTries]);
-  // @ts-ignore
-  const smallScreen = useMediaQuery((theme) => theme.breakpoints.down("sm"));
+  const smallScreen = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down("sm")
+  );
   return (
     <>
       <Container

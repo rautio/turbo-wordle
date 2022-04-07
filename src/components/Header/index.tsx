@@ -8,6 +8,8 @@ import IconButton from "@mui/material/IconButton";
 import SettingsIcon from "@mui/icons-material/Settings";
 import MenuIcon from "@mui/icons-material/Menu";
 import HelpIcon from "@mui/icons-material/HelpOutline";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { Theme } from "@mui/material";
 import Settings from "../Settings";
 import HowToPlay from "../HowToPlay";
 
@@ -26,6 +28,13 @@ const modalStyle = {
 export const Header = () => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [howToPlayOpen, setHowToPlayOpen] = useState(false);
+  const smallScreen = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down("sm")
+  );
+  let headerVariant: "h5" | "h6" = "h5";
+  if (smallScreen) {
+    headerVariant = "h6";
+  }
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" sx={{ minHeight: "48px" }}>
@@ -52,7 +61,7 @@ export const Header = () => {
             <HelpIcon />
           </IconButton>
           <Typography
-            variant="h4"
+            variant={headerVariant}
             component="div"
             sx={{ flexGrow: 1, textAlign: "center" }}
           >

@@ -2,6 +2,7 @@ import React from "react";
 import Stack from "@mui/material/Stack";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Backspace from "@mui/icons-material/Backspace";
+import { Theme } from "@mui/material";
 import Key from "./Key";
 interface Props {
   usedLetters: string[];
@@ -22,10 +23,12 @@ export const Keyboard = ({
   onEnter,
   onLetter,
 }: Props) => {
-  // @ts-ignore
-  const smallScreen = useMediaQuery((theme) => theme.breakpoints.down("sm"));
-  // @ts-ignore
-  const mediumScreen = useMediaQuery((theme) => theme.breakpoints.down("md"));
+  const smallScreen = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down("sm")
+  );
+  const mediumScreen = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down("md")
+  );
   const keySx = {
     margin: "2px",
     minWidth: "62px",

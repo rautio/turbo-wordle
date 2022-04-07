@@ -1,14 +1,17 @@
+import { PaletteMode } from "@mui/material";
+import { Breakpoints } from "@mui/system";
+
 declare module "@mui/material/styles" {
   interface Theme {
-    status: {
-      danger: React.CSSProperties["color"];
-    };
+    breakpoints: Breakpoints;
   }
   interface Palette {
-    neutral: Palette["primary"];
+    mode: PaletteMode;
+    neutral?: Palette["primary"];
   }
   interface PaletteOptions {
-    neutral: PaletteOptions["primary"];
+    mode: PaletteMode;
+    neutral?: PaletteOptions["primary"];
   }
   interface PaletteColor {
     darker?: string;
@@ -16,9 +19,5 @@ declare module "@mui/material/styles" {
   interface SimplePaletteColorOptions {
     darker?: string;
   }
-  interface ThemeOptions {
-    status: {
-      danger: React.CSSProperties["color"];
-    };
-  }
+  interface ThemeOptions {}
 }

@@ -78,6 +78,7 @@ export const SettingsProvider: FC = ({ children }) => {
   return (
     // @ts-ignore
     <SettingsContext.Provider value={settingState}>
+      {/* @ts-ignore */}
       <ThemeProvider theme={createTheme(theme === Theme.dark ? dark : light)}>
         <CssBaseline />
         {children}
