@@ -11,7 +11,6 @@ export enum Theme {
 export interface Settings {
   wordLength: number;
   setWordLength: (length: number) => void;
-  numTries: number;
   setTheme: (theme: Theme) => void;
   theme: Theme;
 }
@@ -19,23 +18,11 @@ export interface Settings {
 const defaultSettings = {
   wordLength: 5,
   setWordLength: () => {},
-  numTries: 6,
   theme: Theme.dark,
   setTheme: () => {},
 };
 
 const DEFAULT_WORD_LENGTH = 5;
-
-// [wordLength] : [numTries]
-const numTriesMap = {
-  "3": 3,
-  "4": 5,
-  "5": 6,
-  "6": 7,
-  "7": 9,
-  "8": 10,
-  "9": 11,
-};
 
 export const SettingsContext = createContext(defaultSettings);
 
@@ -58,9 +45,6 @@ export const SettingsProvider: FC = ({ children }) => {
   }
   const [wordLength, setWordLength] = useState<number>(initSettings.wordLength);
   const [theme, setTheme] = useState<Theme>(initSettings.theme);
-  const numTries =
-    // @ts-ignore
-    (wordLength in numTriesMap && numTriesMap[wordLength.toString()]) || 5;
   useEffect(() => {
     // Store settings in local storage for persistence
     localStorage.setItem(
@@ -69,7 +53,6 @@ export const SettingsProvider: FC = ({ children }) => {
     );
   }, [wordLength, theme]);
   const settingState: Settings = {
-    numTries,
     wordLength,
     setWordLength,
     setTheme,

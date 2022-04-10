@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, FC } from "react";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import Snackbar from "@mui/material/Snackbar";
@@ -7,7 +7,6 @@ import Box from "@mui/material/Box";
 import { Theme } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Keyboard from "../Keyboard";
-import { useWordLength, useNumTries } from "../../hooks/settings";
 import api from "../../api";
 import WordRow from "../WordRow";
 
@@ -54,13 +53,28 @@ const validate = (word: string, correctWord: string) => {
   return results;
 };
 
-export const WordGrid = () => {
-  const [wordLength] = useWordLength();
-  const numTries = useNumTries();
+// [wordLength] : [numTries]
+const numTriesMap = {
+  "3": 3,
+  "4": 5,
+  "5": 6,
+  "6": 7,
+  "7": 9,
+  "8": 10,
+  "9": 11,
+};
+interface WordGridProps {
+  correctWord: string;
+}
+
+export const WordGrid: FC<WordGridProps> = ({ correctWord }) => {
+  const wordLength = correctWord.length;
+  const numTries =
+    // @ts-ignore
+    (wordLength in numTriesMap && numTriesMap[wordLength.toString()]) || 5;
   const [openWrongWord, setOpenWrongWord] = useState(false);
   const [notEnoughLetters, setNotEnoughLetters] = useState(false);
   const [won, setWon] = useState(false);
-  const [correctWord, setCorrectWord] = useState("");
   const [words, setWords] = useState<Words>(Array(numTries).fill(""));
   const [usedLetters, setUsedLetters] = useState<string[]>([]);
   const [correctLetters, setCorrectLetters] = useState<string[]>([]);
@@ -143,26 +157,22 @@ export const WordGrid = () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
   });
-  const reset = () => {
+  const reset = (newWord?: string) => {
+    const wordLength = (newWord || correctWord).length;
+    const numTries =
+      // @ts-ignore
+      (wordLength in numTriesMap && numTriesMap[wordLength.toString()]) || 5;
     setWon(false);
     setWords(Array(numTries).fill(""));
     setResults(Array(numTries));
     setCurrentRow(0);
     setUsedLetters([]);
     setCorrectLetters([]);
-    api
-      .get(`/random?length=${wordLength}`)
-      .then((res) => {
-        setCorrectWord(res.word);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
   };
   useEffect(() => {
-    reset();
+    reset(correctWord);
     // eslint-disable-next-line
-  }, [wordLength, numTries]);
+  }, [correctWord]);
   const smallScreen = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("sm")
   );
