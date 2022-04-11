@@ -18,6 +18,7 @@ export const App = () => {
         <Header />
         <Routes>
           <Route path="/create" element={<Create />} />
+          <Route path="/create/:id" element={<Create />} />
           <Route path="/wordle/:id" element={<Wordle />} />
           <Route path="/" element={<Practice />} />
         </Routes>

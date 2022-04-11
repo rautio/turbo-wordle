@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
@@ -7,6 +7,9 @@ import Typography from "@mui/material/Typography";
 import Snackbar from "@mui/material/Snackbar";
 import { Theme } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import Send from "@mui/icons-material/Send";
+import ContentCopy from "@mui/icons-material/ContentCopy";
+import Add from "@mui/icons-material/Add";
 import Keyboard from "../components/Keyboard";
 import api from "../api";
 import WordRow from "../components/WordRow";
@@ -21,10 +24,10 @@ const createWordle = (word: string) => {
 
 export const CreateWordle = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
   const maxWordLength = 9;
   const [word, setWord] = useState("");
   const [invalidWord, setInvalidWord] = useState(false);
-  const [id, setId] = useState(null);
 
   const onDelete = () => {
     if (word.length > 0) {
@@ -37,7 +40,7 @@ export const CreateWordle = () => {
         .then(async () => {
           const res = await createWordle(word);
           if (res?.id) {
-            setId(res.id);
+            navigate(`/create/${res.id}`);
           }
         })
         .catch(() => {
@@ -77,16 +80,23 @@ export const CreateWordle = () => {
           }}
         />
         <Stack sx={{ alignItems: "center", marginTop: "20px" }}>
-          <WordRow word={word} wordLength={word.length > 3 ? word.length : 3} />
-          <Button
-            variant="contained"
-            color="success"
-            disabled={word.length < 3 || word.length > 9 || id !== null}
-            onClick={onEnter}
-            sx={{ width: "150px", marginTop: "10px" }}
-          >
-            Submit
-          </Button>
+          <WordRow
+            word={word}
+            wordLength={word.length > 3 ? word.length : 3}
+            disabled={!!id}
+          />
+          {!id && (
+            <Button
+              variant="contained"
+              color="success"
+              disabled={word.length < 3 || word.length > 9 || !!id}
+              onClick={onEnter}
+              sx={{ width: "150px", marginTop: "10px" }}
+              startIcon={<Add />}
+            >
+              Create
+            </Button>
+          )}
         </Stack>
       </Container>
       {id && (
@@ -106,10 +116,12 @@ export const CreateWordle = () => {
           </Button>
           <Button
             variant="outlined"
+            color="success"
             onClick={() => {
               const url = window.location.origin + "/wordle/" + id;
               navigator.clipboard.writeText(url);
             }}
+            endIcon={<ContentCopy />}
           >
             Copy Url
           </Button>

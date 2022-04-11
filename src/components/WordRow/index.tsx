@@ -8,6 +8,7 @@ interface Props {
   word: string;
   result?: Array<Result>;
   wordLength: number;
+  disabled?: boolean;
 }
 
 const boxHeights = {
@@ -31,7 +32,12 @@ const fontSizes = {
   "9": "large",
 };
 
-export const WordRow = ({ word, wordLength, result }: Props) => {
+export const WordRow = ({
+  word,
+  wordLength,
+  result,
+  disabled = false,
+}: Props) => {
   const theme = useTheme();
   // Incorrect, Wrong Placement, Correct
   const bgColors = [
@@ -47,6 +53,10 @@ export const WordRow = ({ word, wordLength, result }: Props) => {
   const height = boxHeights[wordLength.toString()] || 30;
   // @ts-ignore
   const fontSize = fontSizes[wordLength.toString()] || "large";
+  const getBgColor = (i: number) => {
+    if (disabled) return bgColors[0];
+    return result && result[i] in bgColors ? bgColors[result[i]] : "none";
+  };
   return (
     <Stack
       direction="row"
@@ -67,9 +77,7 @@ export const WordRow = ({ word, wordLength, result }: Props) => {
             textAlign: "center",
             fontSize,
             textTransform: "uppercase",
-            // borderColor: `rgba(0, 0, 0, ${letter ? "0.3" : "0.12"})`,
-            backgroundColor:
-              result && result[i] in bgColors ? bgColors[result[i]] : "none",
+            backgroundColor: getBgColor(i),
           }}
         >
           <span>{letter}</span>
