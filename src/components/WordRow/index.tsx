@@ -6,7 +6,7 @@ import { Result } from "../WordGrid";
 
 interface Props {
   word: string;
-  result: Array<Result>;
+  result?: Array<Result>;
   wordLength: number;
 }
 

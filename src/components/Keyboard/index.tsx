@@ -5,12 +5,13 @@ import Backspace from "@mui/icons-material/Backspace";
 import { Theme } from "@mui/material";
 import Key from "./Key";
 interface Props {
-  usedLetters: string[];
-  correctLetters: string[];
+  usedLetters?: string[];
+  correctLetters?: string[];
   onDelete: () => void;
   onEnter: () => void;
   onLetter: (letter: string) => void;
   disabled?: boolean;
+  useEnter?: boolean;
 }
 
 const firstRow = ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"];
@@ -18,12 +19,13 @@ const secondRow = ["a", "s", "d", "f", "g", "h", "j", "k", "l"];
 const thirdRow = ["z", "x", "c", "v", "b", "n", "m"];
 
 export const Keyboard = ({
-  usedLetters,
-  correctLetters,
+  usedLetters = [],
+  correctLetters = [],
   onDelete,
   onEnter,
   onLetter,
   disabled,
+  useEnter = true,
 }: Props) => {
   const handleKeyDown = useCallback(
     (e: any) => {
@@ -121,15 +123,17 @@ export const Keyboard = ({
           alignItems: "center",
         }}
       >
-        <Key
-          text="enter"
-          onClick={onEnter}
-          sx={{
-            ...keySx,
-            minWidth: nonLetterMinWidth,
-            padding: nonLetterPadding,
-          }}
-        />
+        {useEnter && (
+          <Key
+            text="enter"
+            onClick={onEnter}
+            sx={{
+              ...keySx,
+              minWidth: nonLetterMinWidth,
+              padding: nonLetterPadding,
+            }}
+          />
+        )}
         {thirdRow.map((letter) => (
           <Key
             key={letter}
