@@ -1,4 +1,4 @@
-import React, { useEffect, useState, FC } from "react";
+import React, { useEffect, useState, useCallback, FC } from "react";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import Snackbar from "@mui/material/Snackbar";
@@ -135,44 +135,24 @@ export const WordGrid: FC<WordGridProps> = ({ correctWord }) => {
       });
     }
   };
-
-  const handleKeyDown = (e: any) => {
-    if (e.keyCode === 8) {
-      onDelete();
-    } else if (e.keyCode === 13) {
-      // After a user clicks settings the icon will remain focused and also trigger on each
-      // 'Enter' key hit unless prevented here
-      e.preventDefault();
-      onEnter();
-    } else if (e.key.toLowerCase() >= "a" && e.key.toLowerCase() <= "z") {
-      onLetter(e.key.toLowerCase());
-    }
-  };
-  useEffect(() => {
-    document.addEventListener("keydown", handleKeyDown);
-    if (won) {
-      document.removeEventListener("keydown", handleKeyDown);
-    }
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  });
-  const reset = (newWord?: string) => {
-    const wordLength = (newWord || correctWord).length;
-    const numTries =
-      // @ts-ignore
-      (wordLength in numTriesMap && numTriesMap[wordLength.toString()]) || 5;
-    setWon(false);
-    setWords(Array(numTries).fill(""));
-    setResults(Array(numTries));
-    setCurrentRow(0);
-    setUsedLetters([]);
-    setCorrectLetters([]);
-  };
+  const reset = useCallback(
+    (newWord?: string) => {
+      const wordLength = (newWord || correctWord).length;
+      const numTries =
+        // @ts-ignore
+        (wordLength in numTriesMap && numTriesMap[wordLength.toString()]) || 5;
+      setWon(false);
+      setWords(Array(numTries).fill(""));
+      setResults(Array(numTries));
+      setCurrentRow(0);
+      setUsedLetters([]);
+      setCorrectLetters([]);
+    },
+    [correctWord]
+  );
   useEffect(() => {
     reset(correctWord);
-    // eslint-disable-next-line
-  }, [correctWord]);
+  }, [correctWord, reset]);
   const smallScreen = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("sm")
   );
@@ -235,6 +215,7 @@ export const WordGrid: FC<WordGridProps> = ({ correctWord }) => {
           onLetter={onLetter}
           usedLetters={usedLetters}
           correctLetters={correctLetters}
+          disabled={won}
         />
       </Container>
     </>

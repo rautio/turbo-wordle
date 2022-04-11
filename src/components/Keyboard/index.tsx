@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useCallback } from "react";
 import Stack from "@mui/material/Stack";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Backspace from "@mui/icons-material/Backspace";
@@ -10,6 +10,7 @@ interface Props {
   onDelete: () => void;
   onEnter: () => void;
   onLetter: (letter: string) => void;
+  disabled?: boolean;
 }
 
 const firstRow = ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"];
@@ -22,7 +23,34 @@ export const Keyboard = ({
   onDelete,
   onEnter,
   onLetter,
+  disabled,
 }: Props) => {
+  const handleKeyDown = useCallback(
+    (e: any) => {
+      if (e.keyCode === 8) {
+        onDelete();
+      } else if (e.keyCode === 13) {
+        // After a user clicks settings the icon will remain focused and also trigger on each
+        // 'Enter' key hit unless prevented here
+        e.preventDefault();
+        onEnter();
+      } else if (e.key.toLowerCase() >= "a" && e.key.toLowerCase() <= "z") {
+        onLetter(e.key.toLowerCase());
+      }
+    },
+    [onDelete, onEnter, onLetter]
+  );
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  });
+  useEffect(() => {
+    if (disabled) {
+      document.removeEventListener("keydown", handleKeyDown);
+    }
+  }, [disabled, handleKeyDown]);
   const smallScreen = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("sm")
   );
