@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import Snackbar from "@mui/material/Snackbar";
 import { Theme } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -52,10 +54,14 @@ export const CreateWordle = () => {
   );
   return (
     <>
-      <Container
-        maxWidth="sm"
-        sx={{ marginTop: smallScreen ? "10px" : "40px" }}
-      >
+      <Container maxWidth="sm" sx={{ marginTop: "20px" }}>
+        <Typography
+          variant="body1"
+          component="div"
+          sx={{ flexGrow: 1, textAlign: "center" }}
+        >
+          Create your own wordle and challenge your friends
+        </Typography>
         <Snackbar
           anchorOrigin={{
             vertical: "top",
@@ -69,14 +75,18 @@ export const CreateWordle = () => {
             marginTop: "120px",
           }}
         />
-        <WordRow word={word} wordLength={word.length > 3 ? word.length : 3} />
-        <Button
-          variant="contained"
-          color="success"
-          disabled={word.length < 3 || word.length > 9}
-        >
-          Submit
-        </Button>
+        <Stack sx={{ alignItems: "center", marginTop: "20px" }}>
+          <WordRow word={word} wordLength={word.length > 3 ? word.length : 3} />
+          <Button
+            variant="contained"
+            color="success"
+            disabled={word.length < 3 || word.length > 9}
+            onClick={onEnter}
+            sx={{ width: "150px", marginTop: "10px" }}
+          >
+            Submit
+          </Button>
+        </Stack>
       </Container>
       {url !== "" && <Link to={url}>{url}</Link>}
       <Container
