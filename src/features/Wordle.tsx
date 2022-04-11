@@ -31,6 +31,7 @@ export const CuratedWordle = () => {
     (success: boolean) => setDone(success ? Done.won : Done.fail),
     []
   );
+  // TODO: 2 calls get made on first render
   const reset = useCallback(() => {
     setDone(Done.none);
     api
@@ -53,6 +54,7 @@ export const CuratedWordle = () => {
           correctWord={correctWord}
           onComplete={onComplete}
           disabled={done !== Done.none}
+          sessionId={id}
         />
       )}
       <Modal open={done === Done.won} onClose={() => reset()}>

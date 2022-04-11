@@ -51,6 +51,36 @@ const numTriesMap = {
   "9": 11,
 };
 
+const getStorageId = (sessionId: string) => `tw-session-${sessionId}`;
+
+const getHydratedData = (id?: string) => {
+  if (id) {
+    const rawData: string | null = localStorage.getItem(getStorageId(id));
+    if (rawData) {
+      const data = JSON.parse(rawData);
+      const isValidCurrentRow =
+        "currentRow" in data && typeof data.currentRow === "number";
+      // TODO: Validate actual data
+      const isValidWords = Array.isArray(data?.words);
+      const isValidResults = Array.isArray(data?.results);
+      // TODO: Check if the arrays are strings
+      const isValidUsedLetters = Array.isArray(data?.usedLetters);
+      const isValidCorrectLetters = Array.isArray(data?.usedLetters);
+      // Only hydrate if all fields are valid
+      if (
+        isValidCurrentRow &&
+        isValidWords &&
+        isValidResults &&
+        isValidUsedLetters &&
+        isValidCorrectLetters
+      ) {
+        return data;
+      }
+    }
+  }
+  return {};
+};
+
 const getNumTries = (wordLength: number) => {
   const numTries =
     // @ts-ignore
@@ -61,22 +91,34 @@ interface WordGridProps {
   correctWord: string;
   onComplete?: (won: boolean) => void;
   disabled?: boolean;
+  sessionId?: string;
 }
 
 export const WordGrid: FC<WordGridProps> = ({
   correctWord,
   onComplete = () => {},
   disabled = false,
+  sessionId,
 }) => {
+  // Try to hydrate from local storage
+  const hydratedData = getHydratedData(sessionId);
   const wordLength = correctWord.length;
   const numTries = getNumTries(wordLength);
   const [openWrongWord, setOpenWrongWord] = useState(false);
   const [notEnoughLetters, setNotEnoughLetters] = useState(false);
-  const [words, setWords] = useState<Words>(Array(numTries).fill(""));
-  const [usedLetters, setUsedLetters] = useState<string[]>([]);
-  const [correctLetters, setCorrectLetters] = useState<string[]>([]);
-  const [results, setResults] = useState<Results>(Array(numTries));
-  const [currentRow, setCurrentRow] = useState(0);
+  const [words, setWords] = useState<Words>(
+    hydratedData?.words || Array(numTries).fill("")
+  );
+  const [usedLetters, setUsedLetters] = useState<string[]>(
+    hydratedData?.usedLetters || []
+  );
+  const [correctLetters, setCorrectLetters] = useState<string[]>(
+    hydratedData?.correctLetters || []
+  );
+  const [results, setResults] = useState<Results>(
+    hydratedData?.results || Array(numTries)
+  );
+  const [currentRow, setCurrentRow] = useState(hydratedData?.currentRow || 0);
 
   const onDelete = () => {
     if (words[currentRow].length > 0) {
@@ -132,14 +174,22 @@ export const WordGrid: FC<WordGridProps> = ({
       });
     }
   };
+  // Store data in local storage
   useEffect(() => {
-    // Reset
-    setWords(Array(numTries).fill(""));
-    setResults(Array(numTries));
-    setCurrentRow(0);
-    setUsedLetters([]);
-    setCorrectLetters([]);
-  }, [correctWord, numTries]);
+    if (sessionId) {
+      const data = { words, results, currentRow, usedLetters, correctLetters };
+      localStorage.setItem(getStorageId(sessionId), JSON.stringify(data));
+    }
+  }, [words, results, currentRow, usedLetters, correctLetters, sessionId]);
+  useEffect(() => {
+    // Try to hydrate from local storage
+    const hydratedData = getHydratedData(sessionId);
+    setWords(hydratedData?.words || Array(numTries).fill(""));
+    setResults(hydratedData?.results || Array(numTries));
+    setCurrentRow(hydratedData?.currentRow || 0);
+    setUsedLetters(hydratedData?.usedLetters || []);
+    setCorrectLetters(hydratedData?.correctLetters || []);
+  }, [sessionId, numTries, correctWord]);
   useEffect(() => {
     // Failed
     if (currentRow > numTries - 1) {
