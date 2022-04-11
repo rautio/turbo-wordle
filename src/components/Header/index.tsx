@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Drawer from "@mui/material/Drawer";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
@@ -6,6 +8,8 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import SettingsIcon from "@mui/icons-material/Settings";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
 import MenuIcon from "@mui/icons-material/Menu";
 import HelpIcon from "@mui/icons-material/HelpOutline";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -26,8 +30,11 @@ const modalStyle = {
 };
 
 export const Header = () => {
+  const navigate = useNavigate();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [howToPlayOpen, setHowToPlayOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
   const smallScreen = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("sm")
   );
@@ -35,6 +42,12 @@ export const Header = () => {
   if (smallScreen) {
     headerVariant = "h6";
   }
+  const drawerNavigate = (path: string) => {
+    return () => {
+      setDrawerOpen(false);
+      navigate(path);
+    };
+  };
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" sx={{ minHeight: "48px" }}>
@@ -45,6 +58,9 @@ export const Header = () => {
             color="inherit"
             aria-label="menu"
             sx={{ mr: 2 }}
+            onClick={() => {
+              setDrawerOpen(true);
+            }}
           >
             <MenuIcon />
           </IconButton>
@@ -101,6 +117,20 @@ export const Header = () => {
           <HowToPlay />
         </Box>
       </Modal>
+      <Drawer
+        anchor="left"
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+      >
+        <List sx={{ marginTop: "60px" }}>
+          <ListItem button onClick={drawerNavigate("/")}>
+            Practice
+          </ListItem>
+          <ListItem button onClick={drawerNavigate("/create")}>
+            Create your own
+          </ListItem>
+        </List>
+      </Drawer>
     </Box>
   );
 };
