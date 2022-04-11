@@ -7,7 +7,6 @@ import Typography from "@mui/material/Typography";
 import Snackbar from "@mui/material/Snackbar";
 import { Theme } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import Send from "@mui/icons-material/Send";
 import ContentCopy from "@mui/icons-material/ContentCopy";
 import Add from "@mui/icons-material/Add";
 import Keyboard from "../components/Keyboard";
