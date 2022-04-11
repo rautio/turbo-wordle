@@ -1,3 +1,5 @@
+[![Netlify Status](https://api.netlify.com/api/v1/badges/1f8b91f8-7ee4-4503-bbfd-9574e7fa1abb/deploy-status)](https://app.netlify.com/sites/turbo-wordle/deploys)
+
 # Turbo Wordle
 
 [Live Demo](https://turbo-wordle.netlify.app/)
