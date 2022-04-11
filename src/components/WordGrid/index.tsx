@@ -1,26 +1,13 @@
-import React, { useEffect, useState, useCallback, FC } from "react";
+import React, { useEffect, useState, FC } from "react";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import Snackbar from "@mui/material/Snackbar";
-import Modal from "@mui/material/Modal";
-import Box from "@mui/material/Box";
 import { Theme } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Keyboard from "../Keyboard";
 import api from "../../api";
 import WordRow from "../WordRow";
 
-const modalStyle = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
 interface Words extends Array<string> {}
 export enum Result {
   NoMatch = 0,
@@ -63,18 +50,28 @@ const numTriesMap = {
   "8": 10,
   "9": 11,
 };
-interface WordGridProps {
-  correctWord: string;
-}
 
-export const WordGrid: FC<WordGridProps> = ({ correctWord }) => {
-  const wordLength = correctWord.length;
+const getNumTries = (wordLength: number) => {
   const numTries =
     // @ts-ignore
     (wordLength in numTriesMap && numTriesMap[wordLength.toString()]) || 5;
+  return numTries;
+};
+interface WordGridProps {
+  correctWord: string;
+  onComplete?: (won: boolean) => void;
+  disabled?: boolean;
+}
+
+export const WordGrid: FC<WordGridProps> = ({
+  correctWord,
+  onComplete = () => {},
+  disabled = false,
+}) => {
+  const wordLength = correctWord.length;
+  const numTries = getNumTries(wordLength);
   const [openWrongWord, setOpenWrongWord] = useState(false);
   const [notEnoughLetters, setNotEnoughLetters] = useState(false);
-  const [won, setWon] = useState(false);
   const [words, setWords] = useState<Words>(Array(numTries).fill(""));
   const [usedLetters, setUsedLetters] = useState<string[]>([]);
   const [correctLetters, setCorrectLetters] = useState<string[]>([]);
@@ -114,7 +111,7 @@ export const WordGrid: FC<WordGridProps> = ({ correctWord }) => {
             ...words[currentRow].split(""),
           ]);
           if (allCorrect) {
-            setWon(true);
+            onComplete(true);
           } else {
             setCurrentRow(currentRow + 1);
           }
@@ -135,24 +132,20 @@ export const WordGrid: FC<WordGridProps> = ({ correctWord }) => {
       });
     }
   };
-  const reset = useCallback(
-    (newWord?: string) => {
-      const wordLength = (newWord || correctWord).length;
-      const numTries =
-        // @ts-ignore
-        (wordLength in numTriesMap && numTriesMap[wordLength.toString()]) || 5;
-      setWon(false);
-      setWords(Array(numTries).fill(""));
-      setResults(Array(numTries));
-      setCurrentRow(0);
-      setUsedLetters([]);
-      setCorrectLetters([]);
-    },
-    [correctWord]
-  );
   useEffect(() => {
-    reset(correctWord);
-  }, [correctWord, reset]);
+    // Reset
+    setWords(Array(numTries).fill(""));
+    setResults(Array(numTries));
+    setCurrentRow(0);
+    setUsedLetters([]);
+    setCorrectLetters([]);
+  }, [correctWord, numTries]);
+  useEffect(() => {
+    // Failed
+    if (currentRow > numTries - 1) {
+      onComplete(false);
+    }
+  }, [currentRow, numTries, onComplete]);
   const smallScreen = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("sm")
   );
@@ -188,12 +181,6 @@ export const WordGrid: FC<WordGridProps> = ({ correctWord }) => {
             marginTop: "120px",
           }}
         />
-        <Modal open={won} onClose={() => reset()}>
-          <Box sx={modalStyle}>You won!</Box>
-        </Modal>
-        <Modal open={currentRow === numTries} onClose={() => reset()}>
-          <Box sx={modalStyle}>The word was: {correctWord}</Box>
-        </Modal>
         <Stack>
           {words.map((w, i) => (
             <WordRow
@@ -215,7 +202,7 @@ export const WordGrid: FC<WordGridProps> = ({ correctWord }) => {
           onLetter={onLetter}
           usedLetters={usedLetters}
           correctLetters={correctLetters}
-          disabled={won}
+          disabled={disabled}
         />
       </Container>
     </>
