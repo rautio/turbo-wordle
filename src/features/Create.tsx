@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
@@ -20,10 +20,11 @@ const createWordle = (word: string) => {
 };
 
 export const CreateWordle = () => {
+  const navigate = useNavigate();
   const maxWordLength = 9;
   const [word, setWord] = useState("");
   const [invalidWord, setInvalidWord] = useState(false);
-  const [url, setUrl] = useState("");
+  const [id, setId] = useState(null);
 
   const onDelete = () => {
     if (word.length > 0) {
@@ -36,7 +37,7 @@ export const CreateWordle = () => {
         .then(async () => {
           const res = await createWordle(word);
           if (res?.id) {
-            setUrl(window.location.hostname + "/wordle/" + res.id);
+            setId(res.id);
           }
         })
         .catch(() => {
@@ -80,7 +81,7 @@ export const CreateWordle = () => {
           <Button
             variant="contained"
             color="success"
-            disabled={word.length < 3 || word.length > 9}
+            disabled={word.length < 3 || word.length > 9 || id !== null}
             onClick={onEnter}
             sx={{ width: "150px", marginTop: "10px" }}
           >
@@ -88,7 +89,32 @@ export const CreateWordle = () => {
           </Button>
         </Stack>
       </Container>
-      {url !== "" && <Link to={url}>{url}</Link>}
+      {id && (
+        <Stack
+          direction="row"
+          sx={{ justifyContent: "center", margin: "10px" }}
+        >
+          <Button
+            variant="contained"
+            color="success"
+            onClick={() => {
+              navigate(`/wordle/${id}`);
+            }}
+            sx={{ marginRight: "10px" }}
+          >
+            Open
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              const url = window.location.origin + "/wordle/" + id;
+              navigator.clipboard.writeText(url);
+            }}
+          >
+            Copy Url
+          </Button>
+        </Stack>
+      )}
       <Container
         maxWidth="md"
         sx={{ marginTop: smallScreen ? "10px" : "40px" }}
