@@ -17,5 +17,5 @@
     "jsx": "react-jsx"
   },
   "include": ["src"],
-  "files": ["src/theme/types.d.ts"]
+  "files": ["src/theme/types.d.ts", "src/types/declarations.d.ts"]
 }

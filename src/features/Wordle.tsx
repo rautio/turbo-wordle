@@ -49,6 +49,8 @@ export const CuratedWordle = () => {
   }, [reset]);
   return (
     <>
+      {done === Done.won && <div>You got it!</div>}
+      {done === Done.fail && <div>The word was: {correctWord}</div>}
       {correctWord && correctWord !== "" && (
         <WordGrid
           correctWord={correctWord}

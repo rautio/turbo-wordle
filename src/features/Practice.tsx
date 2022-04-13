@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useCallback } from "react";
 import Modal from "@mui/material/Modal";
+import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import Replay from "@mui/icons-material/Replay";
+import { validate as isValidUUID } from "uuid";
 import { useWordLength } from "../hooks/settings";
 import api from "../api";
 import WordGrid from "../components/WordGrid";
@@ -17,49 +20,125 @@ const modalStyle = {
   p: 4,
 };
 
-enum Done {
+enum ModalOpen {
   won,
   fail,
   none,
 }
 
+const SESSION_ID = "tw-random-session";
+
+const getHydratedSession = () => {
+  const rawData = localStorage.getItem(SESSION_ID);
+  if (rawData) {
+    const data = JSON.parse(rawData);
+    if (isValidUUID(data?.id)) {
+      return data;
+    }
+  }
+  return {};
+};
+
+const setSession = (data: { id?: string; done?: boolean }) => {
+  const prevData = getHydratedSession();
+  localStorage.setItem(SESSION_ID, JSON.stringify({ ...prevData, ...data }));
+};
+
+const PlayAgain = ({ onClick }: { onClick: () => void }) => (
+  <div
+    style={{
+      width: "100%",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      marginTop: "20px",
+    }}
+  >
+    <Button
+      variant="contained"
+      color="success"
+      onClick={() => {
+        console.log("play again clicked!");
+        onClick();
+      }}
+      endIcon={<Replay />}
+    >
+      Play Again
+    </Button>
+  </div>
+);
+
 export const PracticeWordle = () => {
+  const hydratedData = getHydratedSession();
+  const [sessionId, setSessionId] = useState<string | undefined>(
+    hydratedData?.id || undefined
+  );
   const [wordLength] = useWordLength();
   const [correctWord, setCorrectWord] = useState("");
-  const [done, setDone] = useState<Done>(Done.none);
-  const onComplete = useCallback(
-    (success: boolean) => setDone(success ? Done.won : Done.fail),
-    []
-  );
-  const reset = useCallback(() => {
-    setDone(Done.none);
-    api
-      .get(`/random?length=${wordLength}`)
-      .then((res) => {
-        setCorrectWord(res.word);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  const [done, setDone] = useState(hydratedData?.done || false);
+  const [modalOpen, setModalOpen] = useState<ModalOpen>(ModalOpen.none);
+  const onComplete = useCallback((success: boolean) => {
+    setModalOpen(success ? ModalOpen.won : ModalOpen.fail);
+    setDone(true);
+    setSession({ done: true });
+  }, []);
+  const createNewSession = useCallback(async () => {
+    console.log("creating new session");
+    const { word } = await api.get(`/random?length=${wordLength}`);
+    if (!word) return;
+    const { id } = await api.post("/wordle", { word });
+    if (!id) return;
+    setSessionId(id);
+    setCorrectWord(word);
+    setSession({ id, done: false });
+    setModalOpen(ModalOpen.none);
+    setDone(false);
   }, [wordLength]);
+  const fetchCorrectWord = useCallback(async () => {
+    if (sessionId) {
+      const { word } = await api.get(`/wordle/${sessionId}`);
+      setCorrectWord(word);
+    }
+  }, [sessionId]);
   useEffect(() => {
-    reset();
-    // Reset only changes on wordLength so no need to also listen for it here
-  }, [reset]);
+    if (!sessionId) {
+      console.log("no session id!");
+      createNewSession();
+    } else if (!correctWord) {
+      fetchCorrectWord();
+    }
+  }, [sessionId, correctWord, createNewSession, fetchCorrectWord]);
+  console.log({ sessionId, correctWord });
   return (
     <>
+      {done && modalOpen === ModalOpen.none && (
+        <PlayAgain onClick={createNewSession} />
+      )}
       {correctWord && correctWord !== "" && (
         <WordGrid
           correctWord={correctWord}
           onComplete={onComplete}
-          disabled={done !== Done.none}
+          disabled={modalOpen !== ModalOpen.none}
+          sessionId={sessionId}
         />
       )}
-      <Modal open={done === Done.won} onClose={() => reset()}>
-        <Box sx={modalStyle}>You won!</Box>
+      <Modal
+        open={modalOpen === ModalOpen.won}
+        onClose={() => setModalOpen(ModalOpen.none)}
+      >
+        <Box sx={modalStyle}>
+          <div>You won!</div>
+          <PlayAgain onClick={createNewSession} />
+        </Box>
       </Modal>
-      <Modal open={done === Done.fail} onClose={() => reset()}>
-        <Box sx={modalStyle}>The word was: {correctWord}</Box>
+      <Modal
+        open={modalOpen === ModalOpen.fail}
+        onClose={() => setModalOpen(ModalOpen.none)}
+      >
+        <Box sx={modalStyle}>
+          <div>The word was: {correctWord}</div>
+          <PlayAgain onClick={createNewSession} />
+        </Box>
       </Modal>
     </>
   );

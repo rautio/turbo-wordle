@@ -1,4 +1,4 @@
-import React, { useEffect, useState, FC } from "react";
+import React, { useEffect, useState, FC, useRef } from "react";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import Snackbar from "@mui/material/Snackbar";
@@ -51,34 +51,62 @@ const numTriesMap = {
   "9": 11,
 };
 
-const getStorageId = (sessionId: string) => `tw-session-${sessionId}`;
+const getStorageId = () => `tw-wordgrid`;
 
 const getHydratedData = (id?: string) => {
   if (id) {
-    const rawData: string | null = localStorage.getItem(getStorageId(id));
+    const rawData = localStorage.getItem(getStorageId());
     if (rawData) {
-      const data = JSON.parse(rawData);
-      const isValidCurrentRow =
-        "currentRow" in data && typeof data.currentRow === "number";
-      // TODO: Validate actual data
-      const isValidWords = Array.isArray(data?.words);
-      const isValidResults = Array.isArray(data?.results);
-      // TODO: Check if the arrays are strings
-      const isValidUsedLetters = Array.isArray(data?.usedLetters);
-      const isValidCorrectLetters = Array.isArray(data?.usedLetters);
-      // Only hydrate if all fields are valid
-      if (
-        isValidCurrentRow &&
-        isValidWords &&
-        isValidResults &&
-        isValidUsedLetters &&
-        isValidCorrectLetters
-      ) {
-        return data;
+      const fullData = JSON.parse(rawData);
+      if (id in fullData && typeof fullData[id] === "object") {
+        const data = fullData[id];
+        const isValidCurrentRow =
+          "currentRow" in data && typeof data.currentRow === "number";
+        // TODO: Validate actual data
+        const isValidWords = Array.isArray(data?.words);
+        const isValidResults = Array.isArray(data?.results);
+        // TODO: Check if the arrays are strings
+        const isValidUsedLetters = Array.isArray(data?.usedLetters);
+        const isValidCorrectLetters = Array.isArray(data?.usedLetters);
+        // Only hydrate if all fields are valid
+        if (
+          isValidCurrentRow &&
+          isValidWords &&
+          isValidResults &&
+          isValidUsedLetters &&
+          isValidCorrectLetters
+        ) {
+          return data;
+        }
       }
     }
   }
   return {};
+};
+
+const setSessionData = (id?: string, data?: any) => {
+  if (id) {
+    const rawData = localStorage.getItem(getStorageId());
+    let prevData: { [key: string]: any } = {};
+    let prevSessionData = {};
+    if (rawData) {
+      prevData = JSON.parse(rawData);
+      prevSessionData = id in prevData ? prevData[id] : {};
+    }
+    // TODO: Add a mechanism to drop older data
+    localStorage.setItem(
+      getStorageId(),
+      JSON.stringify({ ...prevData, [id]: { ...prevSessionData, ...data } })
+    );
+  }
+};
+
+const usePrevious = (value: any) => {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
 };
 
 const getNumTries = (wordLength: number) => {
@@ -102,6 +130,7 @@ export const WordGrid: FC<WordGridProps> = ({
 }) => {
   // Try to hydrate from local storage
   const hydratedData = getHydratedData(sessionId);
+  const prevSessionId = usePrevious(sessionId);
   const wordLength = correctWord.length;
   const numTries = getNumTries(wordLength);
   const [openWrongWord, setOpenWrongWord] = useState(false);
@@ -153,8 +182,14 @@ export const WordGrid: FC<WordGridProps> = ({
             ...words[currentRow].split(""),
           ]);
           if (allCorrect) {
+            // Yay we won
             onComplete(true);
+            setSessionData(sessionId, { correctWord });
           } else {
+            const newRow = currentRow + 1;
+            if (newRow > numTries - 1) {
+              onComplete(false);
+            }
             setCurrentRow(currentRow + 1);
           }
         })
@@ -176,26 +211,29 @@ export const WordGrid: FC<WordGridProps> = ({
   };
   // Store data in local storage
   useEffect(() => {
-    if (sessionId) {
+    // If the sessionId changed then we don't want to do this.
+    if (sessionId && prevSessionId === sessionId) {
       const data = { words, results, currentRow, usedLetters, correctLetters };
-      localStorage.setItem(getStorageId(sessionId), JSON.stringify(data));
+      setSessionData(sessionId, data);
     }
-  }, [words, results, currentRow, usedLetters, correctLetters, sessionId]);
+  }, [
+    words,
+    results,
+    currentRow,
+    usedLetters,
+    correctLetters,
+    sessionId,
+    prevSessionId,
+  ]);
   useEffect(() => {
     // Try to hydrate from local storage
-    const hydratedData = getHydratedData(sessionId);
+    let hydratedData = getHydratedData(sessionId);
     setWords(hydratedData?.words || Array(numTries).fill(""));
     setResults(hydratedData?.results || Array(numTries));
     setCurrentRow(hydratedData?.currentRow || 0);
     setUsedLetters(hydratedData?.usedLetters || []);
     setCorrectLetters(hydratedData?.correctLetters || []);
   }, [sessionId, numTries, correctWord]);
-  useEffect(() => {
-    // Failed
-    if (currentRow > numTries - 1) {
-      onComplete(false);
-    }
-  }, [currentRow, numTries, onComplete]);
   const smallScreen = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("sm")
   );

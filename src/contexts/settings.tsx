@@ -26,8 +26,10 @@ const DEFAULT_WORD_LENGTH = 5;
 
 export const SettingsContext = createContext(defaultSettings);
 
+const STORAGE_ID = "tw-settings";
+
 export const SettingsProvider: FC = ({ children }) => {
-  const storedSettings = localStorage.getItem("turbo-wordle-settings");
+  const storedSettings = localStorage.getItem(STORAGE_ID);
   const initSettings = { wordLength: DEFAULT_WORD_LENGTH, theme: Theme.dark };
   // Hydrate settings from local storage
   if (storedSettings) {
