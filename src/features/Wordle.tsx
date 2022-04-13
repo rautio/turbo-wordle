@@ -6,8 +6,8 @@ import { Theme } from "@mui/material";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import api from "../api";
-import WordGrid from "../components/WordGrid";
+import api from "api";
+import WordGrid from "components/WordGrid";
 
 const modalStyle = {
   position: "absolute",

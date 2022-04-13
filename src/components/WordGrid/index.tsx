@@ -4,10 +4,10 @@ import Stack from "@mui/material/Stack";
 import Snackbar from "@mui/material/Snackbar";
 import { Theme } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import Keyboard from "../Keyboard";
-import api from "../../api";
-import WordRow from "../WordRow";
-import usePrevious from "../../hooks/usePrevious";
+import api from "api";
+import usePrevious from "hooks/usePrevious";
+import Keyboard from "components/Keyboard";
+import WordRow from "components/WordRow";
 
 interface Words extends Array<string> {}
 export enum Result {

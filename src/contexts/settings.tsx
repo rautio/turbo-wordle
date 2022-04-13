@@ -2,7 +2,7 @@ import { FC, createContext, useState, useEffect } from "react";
 import { ThemeProvider } from "@mui/material"; // @ts-ignore
 import { createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import { light, dark } from "../theme";
+import { light, dark } from "theme";
 
 export enum Theme {
   dark = "dark",

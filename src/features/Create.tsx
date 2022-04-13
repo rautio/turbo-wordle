@@ -9,9 +9,9 @@ import { Theme } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import ContentCopy from "@mui/icons-material/ContentCopy";
 import Add from "@mui/icons-material/Add";
-import Keyboard from "../components/Keyboard";
-import api from "../api";
-import WordRow from "../components/WordRow";
+import Keyboard from "components/Keyboard";
+import api from "api";
+import WordRow from "components/WordRow";
 
 const validateWord = (word: string) => {
   return api.get(`/word/${word}`);

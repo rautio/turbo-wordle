@@ -7,8 +7,8 @@ import Switch from "@mui/material/Switch";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Select from "@mui/material/Select";
-import { useWordLength, useTheme } from "../../hooks/settings";
-import { Theme } from "../../contexts/settings";
+import { useWordLength, useTheme } from "hooks/settings";
+import { Theme } from "contexts/settings";
 
 export const Settings = () => {
   const [wordLength, setWordLength] = useWordLength();

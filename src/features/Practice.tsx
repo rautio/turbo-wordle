@@ -7,9 +7,9 @@ import { Theme } from "@mui/material";
 import Box from "@mui/material/Box";
 import Replay from "@mui/icons-material/Replay";
 import { validate as isValidUUID } from "uuid";
-import { useWordLength } from "../hooks/settings";
-import api from "../api";
-import WordGrid from "../components/WordGrid";
+import { useWordLength } from "hooks/settings";
+import api from "api";
+import WordGrid from "components/WordGrid";
 
 const modalStyle = {
   position: "absolute",
