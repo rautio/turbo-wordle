@@ -49,10 +49,7 @@ export const SettingsProvider: FC = ({ children }) => {
   const [theme, setTheme] = useState<Theme>(initSettings.theme);
   useEffect(() => {
     // Store settings in local storage for persistence
-    localStorage.setItem(
-      "turbo-wordle-settings",
-      JSON.stringify({ theme, wordLength })
-    );
+    localStorage.setItem(STORAGE_ID, JSON.stringify({ theme, wordLength }));
   }, [wordLength, theme]);
   const settingState: Settings = {
     wordLength,
