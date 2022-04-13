@@ -1,5 +1,8 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
+import Container from "@mui/material/Container";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { Theme } from "@mui/material";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
@@ -60,6 +63,9 @@ const setSession = (id?: string, data?: { done: DoneState }) => {
 
 export const CuratedWordle = () => {
   const { id } = useParams();
+  const smallScreen = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down("sm")
+  );
   const hydratedData = getHydratedSession(id);
   const [correctWord, setCorrectWord] = useState("");
   const [modalOpen, setModalOpen] = useState<ModalOpen>(ModalOpen.none);
@@ -93,7 +99,11 @@ export const CuratedWordle = () => {
         <Typography
           variant="h6"
           component="div"
-          sx={{ flexGrow: 1, textAlign: "center", marginTop: "20px" }}
+          sx={{
+            flexGrow: 1,
+            textAlign: "center",
+            marginTop: smallScreen ? "4px" : "20px",
+          }}
         >
           You got it!
         </Typography>
@@ -102,24 +112,30 @@ export const CuratedWordle = () => {
         <Typography
           variant="h6"
           component="div"
-          sx={{ flexGrow: 1, textAlign: "center", marginTop: "20px" }}
+          sx={{
+            flexGrow: 1,
+            textAlign: "center",
+            marginTop: smallScreen ? "4px" : "20px",
+          }}
         >
           The word was: {correctWord}
         </Typography>
       )}
       {correctWord && correctWord !== "" && (
-        <WordGrid
-          correctWord={correctWord}
-          onComplete={onComplete}
-          disabled={modalOpen !== ModalOpen.none}
-          sessionId={id}
-        />
+        <Container sx={{ marginTop: smallScreen ? "4px" : "40px" }}>
+          <WordGrid
+            correctWord={correctWord}
+            onComplete={onComplete}
+            disabled={modalOpen !== ModalOpen.none}
+            sessionId={id}
+          />
+        </Container>
       )}
       <Modal
         open={modalOpen === ModalOpen.won}
         onClose={() => setModalOpen(ModalOpen.none)}
       >
-        <Box sx={modalStyle}>You won!</Box>
+        <Box sx={modalStyle}>You figured it out!</Box>
       </Modal>
       <Modal
         open={modalOpen === ModalOpen.fail}

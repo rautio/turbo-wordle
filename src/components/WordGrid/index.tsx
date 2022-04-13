@@ -232,10 +232,7 @@ export const WordGrid: FC<WordGridProps> = ({
   );
   return (
     <>
-      <Container
-        maxWidth="sm"
-        sx={{ marginTop: smallScreen ? "10px" : "40px" }}
-      >
+      <Container maxWidth="sm">
         <Snackbar
           anchorOrigin={{
             vertical: "top",
@@ -273,10 +270,7 @@ export const WordGrid: FC<WordGridProps> = ({
           ))}
         </Stack>
       </Container>
-      <Container
-        maxWidth="md"
-        sx={{ marginTop: smallScreen ? "10px" : "40px" }}
-      >
+      <Container maxWidth="md" sx={{ marginTop: smallScreen ? "3px" : "40px" }}>
         <Keyboard
           onDelete={onDelete}
           onEnter={onEnter}

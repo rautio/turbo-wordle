@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useCallback } from "react";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import Modal from "@mui/material/Modal";
 import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
+import { Theme } from "@mui/material";
 import Box from "@mui/material/Box";
 import Replay from "@mui/icons-material/Replay";
 import { validate as isValidUUID } from "uuid";
@@ -44,31 +47,38 @@ const setSession = (data: { id?: string; done?: boolean }) => {
   localStorage.setItem(SESSION_ID, JSON.stringify({ ...prevData, ...data }));
 };
 
-const PlayAgain = ({ onClick }: { onClick: () => void }) => (
-  <div
-    style={{
-      width: "100%",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      marginTop: "20px",
-    }}
-  >
-    <Button
-      variant="contained"
-      color="success"
-      onClick={() => {
-        console.log("play again clicked!");
-        onClick();
+const PlayAgain = ({ onClick }: { onClick: () => void }) => {
+  const smallScreen = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down("sm")
+  );
+  return (
+    <div
+      style={{
+        width: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: smallScreen ? "4px" : "20px",
       }}
-      endIcon={<Replay />}
     >
-      Play Again
-    </Button>
-  </div>
-);
+      <Button
+        variant="contained"
+        color="success"
+        onClick={() => {
+          onClick();
+        }}
+        endIcon={<Replay />}
+      >
+        Play Again
+      </Button>
+    </div>
+  );
+};
 
 export const PracticeWordle = () => {
+  const smallScreen = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down("sm")
+  );
   const hydratedData = getHydratedSession();
   const [sessionId, setSessionId] = useState<string | undefined>(
     hydratedData?.id || undefined
@@ -115,12 +125,14 @@ export const PracticeWordle = () => {
         <PlayAgain onClick={createNewSession} />
       )}
       {correctWord && correctWord !== "" && (
-        <WordGrid
-          correctWord={correctWord}
-          onComplete={onComplete}
-          disabled={modalOpen !== ModalOpen.none}
-          sessionId={sessionId}
-        />
+        <Container sx={{ marginTop: smallScreen ? "2px" : "40px" }}>
+          <WordGrid
+            correctWord={correctWord}
+            onComplete={onComplete}
+            disabled={modalOpen !== ModalOpen.none}
+            sessionId={sessionId}
+          />
+        </Container>
       )}
       <Modal
         open={modalOpen === ModalOpen.won}

@@ -60,22 +60,25 @@ export const Keyboard = ({
     theme.breakpoints.down("md")
   );
   const keySx = {
-    margin: "2px",
+    margin: "3px",
     minWidth: "62px",
     minHeight: "56px",
   };
-  let nonLetterMinWidth = "75px";
+  let enterMinWidth = "75px";
+  let deleteMinWidth = "75px";
   let nonLetterPadding = "6px 24px 6px 24px";
   if (mediumScreen) {
-    keySx.minWidth = "42px";
-    nonLetterMinWidth = "65px";
+    keySx.minWidth = "40px";
+    enterMinWidth = "65px";
+    deleteMinWidth = "60px";
     nonLetterPadding = "6px 12px 6px 12px";
   }
   if (smallScreen) {
     // @ts-ignore
     keySx.padding = "6px";
-    keySx.minWidth = "32px";
-    nonLetterMinWidth = "55px";
+    keySx.minWidth = "30px";
+    enterMinWidth = "55px";
+    deleteMinWidth = "45px";
     nonLetterPadding = "6px";
   }
   return (
@@ -129,7 +132,7 @@ export const Keyboard = ({
             onClick={onEnter}
             sx={{
               ...keySx,
-              minWidth: nonLetterMinWidth,
+              minWidth: enterMinWidth,
               padding: nonLetterPadding,
             }}
           />
@@ -149,7 +152,7 @@ export const Keyboard = ({
           onClick={onDelete}
           sx={{
             ...keySx,
-            minWidth: nonLetterMinWidth,
+            minWidth: deleteMinWidth,
             padding: nonLetterPadding,
           }}
         />
