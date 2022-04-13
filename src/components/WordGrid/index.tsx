@@ -1,4 +1,4 @@
-import React, { useEffect, useState, FC, useRef } from "react";
+import React, { useEffect, useState, FC } from "react";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import Snackbar from "@mui/material/Snackbar";
@@ -7,6 +7,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import Keyboard from "../Keyboard";
 import api from "../../api";
 import WordRow from "../WordRow";
+import usePrevious from "../../hooks/usePrevious";
 
 interface Words extends Array<string> {}
 export enum Result {
@@ -99,14 +100,6 @@ const setSessionData = (id?: string, data?: any) => {
       JSON.stringify({ ...prevData, [id]: { ...prevSessionData, ...data } })
     );
   }
-};
-
-const usePrevious = (value: any) => {
-  const ref = useRef();
-  useEffect(() => {
-    ref.current = value;
-  });
-  return ref.current;
 };
 
 const getNumTries = (wordLength: number) => {

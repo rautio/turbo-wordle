@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import Modal from "@mui/material/Modal";
+import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import api from "../api";
 import WordGrid from "../components/WordGrid";
@@ -17,52 +18,113 @@ const modalStyle = {
   p: 4,
 };
 
-enum Done {
+enum DoneState {
+  won,
+  fail,
+}
+
+enum ModalOpen {
   won,
   fail,
   none,
 }
 
+const SESSION_ID = "tw-curated-sessions";
+
+const getHydratedSession = (id?: string) => {
+  const rawData = localStorage.getItem(SESSION_ID);
+  if (rawData && id) {
+    const data = JSON.parse(rawData);
+    if (id in data && data[id]) {
+      return data[id];
+    }
+  }
+  return {};
+};
+
+const setSession = (id?: string, data?: { done: DoneState }) => {
+  if (id) {
+    const rawData = localStorage.getItem(SESSION_ID);
+    let prevData = {};
+    if (rawData) {
+      prevData = JSON.parse(rawData);
+    }
+    const prevSessionData = getHydratedSession(id);
+    // Persist other sessions
+    localStorage.setItem(
+      SESSION_ID,
+      JSON.stringify({ ...prevData, [id]: { ...prevSessionData, ...data } })
+    );
+  }
+};
+
 export const CuratedWordle = () => {
   const { id } = useParams();
+  const hydratedData = getHydratedSession(id);
   const [correctWord, setCorrectWord] = useState("");
-  const [done, setDone] = useState<Done>(Done.none);
+  const [modalOpen, setModalOpen] = useState<ModalOpen>(ModalOpen.none);
+  const [done, setDone] = useState(hydratedData?.done ?? false);
   const onComplete = useCallback(
-    (success: boolean) => setDone(success ? Done.won : Done.fail),
-    []
+    (success: boolean) => {
+      const doneState = success ? DoneState.won : DoneState.fail;
+      setModalOpen(success ? ModalOpen.won : ModalOpen.fail);
+      setSession(id, { done: doneState });
+      setDone(doneState);
+    },
+    [id]
   );
-  // TODO: 2 calls get made on first render
-  const reset = useCallback(() => {
-    setDone(Done.none);
-    api
-      .get(`/wordle/${id}`)
-      .then((res) => {
-        setCorrectWord(res.word);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [id]);
+  // TODO: Seeing duplicate fetch calls
   useEffect(() => {
-    reset();
-    // Reset only changes on wordLength so no need to also listen for it here
-  }, [reset]);
+    if (id && correctWord === "") {
+      setModalOpen(ModalOpen.none);
+      api
+        .get(`/wordle/${id}`)
+        .then((res) => {
+          setCorrectWord(res.word);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [id, correctWord]);
   return (
     <>
-      {done === Done.won && <div>You got it!</div>}
-      {done === Done.fail && <div>The word was: {correctWord}</div>}
+      {done === DoneState.won && (
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{ flexGrow: 1, textAlign: "center", marginTop: "20px" }}
+        >
+          You got it!
+        </Typography>
+      )}
+      {done === DoneState.fail && (
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{ flexGrow: 1, textAlign: "center", marginTop: "20px" }}
+        >
+          The word was: {correctWord}
+        </Typography>
+      )}
       {correctWord && correctWord !== "" && (
         <WordGrid
           correctWord={correctWord}
           onComplete={onComplete}
-          disabled={done !== Done.none}
+          disabled={modalOpen !== ModalOpen.none}
           sessionId={id}
         />
       )}
-      <Modal open={done === Done.won} onClose={() => reset()}>
+      <Modal
+        open={modalOpen === ModalOpen.won}
+        onClose={() => setModalOpen(ModalOpen.none)}
+      >
         <Box sx={modalStyle}>You won!</Box>
       </Modal>
-      <Modal open={done === Done.fail} onClose={() => reset()}>
+      <Modal
+        open={modalOpen === ModalOpen.fail}
+        onClose={() => setModalOpen(ModalOpen.none)}
+      >
         <Box sx={modalStyle}>The word was: {correctWord}</Box>
       </Modal>
     </>
