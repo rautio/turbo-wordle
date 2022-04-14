@@ -110,7 +110,7 @@ const getNumTries = (wordLength: number) => {
 };
 interface WordGridProps {
   correctWord: string;
-  onComplete?: (won: boolean) => void;
+  onComplete?: (won: boolean, words: Array<string>) => void;
   disabled?: boolean;
   sessionId?: string;
 }
@@ -174,14 +174,16 @@ export const WordGrid: FC<WordGridProps> = ({
             ...oldLetters,
             ...words[currentRow].split(""),
           ]);
+          // Filter out empty placeholders
+          const completedWords = words.filter((w) => w !== "");
           if (allCorrect) {
             // Yay we won
-            onComplete(true);
+            onComplete(true, completedWords);
             setSessionData(sessionId, { correctWord });
           } else {
             const newRow = currentRow + 1;
             if (newRow > numTries - 1) {
-              onComplete(false);
+              onComplete(false, completedWords);
             }
             setCurrentRow(currentRow + 1);
           }

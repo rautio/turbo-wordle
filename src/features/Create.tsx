@@ -18,7 +18,7 @@ const validateWord = (word: string) => {
 };
 
 const createWordle = (word: string) => {
-  return api.post(`/wordle`, { word });
+  return api.post(`/wordle`, { word, source: "curated" });
 };
 
 export const CreateWordle = () => {

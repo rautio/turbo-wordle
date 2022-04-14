@@ -71,11 +71,16 @@ export const CuratedWordle = () => {
   const [modalOpen, setModalOpen] = useState<ModalOpen>(ModalOpen.none);
   const [done, setDone] = useState(hydratedData?.done ?? false);
   const onComplete = useCallback(
-    (success: boolean) => {
+    (success: boolean, words) => {
       const doneState = success ? DoneState.won : DoneState.fail;
       setModalOpen(success ? ModalOpen.won : ModalOpen.fail);
       setSession(id, { done: doneState });
       setDone(doneState);
+      api.post("/session", {
+        wordle_id: id,
+        correct: success,
+        guesses: JSON.stringify(words),
+      });
     },
     [id]
   );

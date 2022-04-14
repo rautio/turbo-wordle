@@ -47,7 +47,13 @@ const setSession = (data: { id?: string; done?: boolean }) => {
   localStorage.setItem(SESSION_ID, JSON.stringify({ ...prevData, ...data }));
 };
 
-const PlayAgain = ({ onClick }: { onClick: () => void }) => {
+const PlayAgain = ({
+  onClick,
+  text,
+}: {
+  onClick: () => void;
+  text?: string;
+}) => {
   const smallScreen = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("sm")
   );
@@ -69,7 +75,7 @@ const PlayAgain = ({ onClick }: { onClick: () => void }) => {
         }}
         endIcon={<Replay />}
       >
-        Play Again
+        {text || "Play Again"}
       </Button>
     </div>
   );
@@ -87,16 +93,24 @@ export const PracticeWordle = () => {
   const [correctWord, setCorrectWord] = useState("");
   const [done, setDone] = useState(hydratedData?.done || false);
   const [modalOpen, setModalOpen] = useState<ModalOpen>(ModalOpen.none);
-  const onComplete = useCallback((success: boolean) => {
-    setModalOpen(success ? ModalOpen.won : ModalOpen.fail);
-    setDone(true);
-    setSession({ done: true });
-  }, []);
+  const onComplete = useCallback(
+    (success, words) => {
+      setModalOpen(success ? ModalOpen.won : ModalOpen.fail);
+      setDone(true);
+      setSession({ done: true });
+      api.post("/session", {
+        wordle_id: sessionId,
+        correct: success,
+        guesses: JSON.stringify(words),
+      });
+    },
+    [sessionId]
+  );
   const createNewSession = useCallback(async () => {
     console.log("creating new session");
     const { word } = await api.get(`/random?length=${wordLength}`);
     if (!word) return;
-    const { id } = await api.post("/wordle", { word });
+    const { id } = await api.post("/wordle", { word, source: "practice" });
     if (!id) return;
     setSessionId(id);
     setCorrectWord(word);
@@ -121,9 +135,10 @@ export const PracticeWordle = () => {
   console.log({ sessionId, correctWord });
   return (
     <>
-      {done && modalOpen === ModalOpen.none && (
-        <PlayAgain onClick={createNewSession} />
-      )}
+      <PlayAgain
+        onClick={createNewSession}
+        text={done ? "Play Again" : "New Word"}
+      />
       {correctWord && correctWord !== "" && (
         <Container sx={{ marginTop: smallScreen ? "2px" : "40px" }}>
           <WordGrid
