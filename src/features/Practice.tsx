@@ -98,7 +98,7 @@ export const PracticeWordle = () => {
       setModalOpen(success ? ModalOpen.won : ModalOpen.fail);
       setDone(true);
       setSession({ done: true });
-      api.post("/session", {
+      api.post("/wordle-session", {
         wordle_id: sessionId,
         correct: success,
         guesses: JSON.stringify(words),

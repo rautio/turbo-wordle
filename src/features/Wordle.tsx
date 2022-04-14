@@ -76,7 +76,7 @@ export const CuratedWordle = () => {
       setModalOpen(success ? ModalOpen.won : ModalOpen.fail);
       setSession(id, { done: doneState });
       setDone(doneState);
-      api.post("/session", {
+      api.post("/wordle-session", {
         wordle_id: id,
         correct: success,
         guesses: JSON.stringify(words),
