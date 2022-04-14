@@ -11,7 +11,10 @@ export const HowToPlay: FC<Props> = ({ onNavigate }) => {
   const navigate = useNavigate();
   return (
     <div>
-      <Typography variant="h6">How to play!</Typography>
+      <Typography variant="h3" sx={{ marginBottom: "10px" }}>
+        Welcome!
+      </Typography>
+      <Typography variant="h6">How to play:</Typography>
       <p>Guess the correct word. </p>
       <p>
         Each guess must be a valid word and be of the full length displayed. Hit

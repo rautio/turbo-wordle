@@ -28,11 +28,28 @@ const modalStyle = {
   boxShadow: 24,
   p: 4,
 };
+
+const FirstTimeID = "tw-firsttimer";
+
+const isFirstTime = () => {
+  const rawData = localStorage.getItem(FirstTimeID);
+  if (rawData) {
+    const data = JSON.parse(rawData);
+    return data;
+  }
+  return true;
+};
+
+const setNotAFirstTimer = () => {
+  localStorage.setItem(FirstTimeID, JSON.stringify(false));
+};
+
 // TODO: Add statistics
 export const Header = () => {
   const navigate = useNavigate();
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [howToPlayOpen, setHowToPlayOpen] = useState(false);
+  const firstTimer = isFirstTime();
+  const [howToPlayOpen, setHowToPlayOpen] = useState(firstTimer);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const smallScreen = useMediaQuery((theme: Theme) =>
@@ -47,6 +64,10 @@ export const Header = () => {
       setDrawerOpen(false);
       navigate(path);
     };
+  };
+  const closeHowToPlay = () => {
+    setNotAFirstTimer();
+    setHowToPlayOpen(false);
   };
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -71,7 +92,7 @@ export const Header = () => {
             aria-label="menu"
             sx={{ mr: 2 }}
             onClick={() => {
-              setHowToPlayOpen(true);
+              closeHowToPlay();
             }}
           >
             <HelpIcon />
@@ -110,13 +131,13 @@ export const Header = () => {
       <Modal
         open={howToPlayOpen}
         onClose={() => {
-          setHowToPlayOpen(false);
+          closeHowToPlay();
         }}
       >
         <Box sx={modalStyle}>
           <HowToPlay
             onNavigate={() => {
-              setHowToPlayOpen(false);
+              closeHowToPlay();
             }}
           />
         </Box>
