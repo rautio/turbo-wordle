@@ -5,24 +5,19 @@ interface KeyProps {
   text: string | React.ReactNode;
   onClick: () => void;
   used?: boolean;
-  correct?: boolean;
+  color?: KeyColor;
   sx?: any;
 }
+
+export type KeyColor = "primary" | "secondary" | "warning" | "success";
 
 export const Key = ({
   text,
   onClick,
   used = false,
-  correct = false,
+  color = "primary",
   sx,
 }: KeyProps) => {
-  let color: "primary" | "secondary" | "success" = "primary";
-  if (used) {
-    color = "secondary";
-  }
-  if (correct) {
-    color = "success";
-  }
   return (
     <Button variant="contained" onClick={onClick} color={color} sx={sx}>
       {text}

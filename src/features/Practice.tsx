@@ -107,7 +107,6 @@ export const PracticeWordle = () => {
     [sessionId]
   );
   const createNewSession = useCallback(async () => {
-    console.log("creating new session");
     const { word } = await api.get(`/random?length=${wordLength}`);
     if (!word) return;
     const { id } = await api.post("/wordle", { word, source: "practice" });
@@ -126,13 +125,11 @@ export const PracticeWordle = () => {
   }, [sessionId]);
   useEffect(() => {
     if (!sessionId) {
-      console.log("no session id!");
       createNewSession();
     } else if (!correctWord) {
       fetchCorrectWord();
     }
   }, [sessionId, correctWord, createNewSession, fetchCorrectWord]);
-  console.log({ sessionId, correctWord });
   return (
     <>
       <PlayAgain

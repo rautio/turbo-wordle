@@ -28,7 +28,9 @@ const modalStyle = {
   boxShadow: 24,
   p: 4,
 };
-
+// TODO: Create better navigation between practice and create your own
+// TODO: Add statistics
+// TODO: Add a welcome screen for new comers
 export const Header = () => {
   const navigate = useNavigate();
   const [settingsOpen, setSettingsOpen] = useState(false);

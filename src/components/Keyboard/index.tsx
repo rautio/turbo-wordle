@@ -3,10 +3,11 @@ import Stack from "@mui/material/Stack";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Backspace from "@mui/icons-material/Backspace";
 import { Theme } from "@mui/material";
-import Key from "./Key";
+import Key, { KeyColor } from "./Key";
 interface Props {
   usedLetters?: string[];
   correctLetters?: string[];
+  misplacedLetters?: string[];
   onDelete: () => void;
   onEnter: () => void;
   onLetter: (letter: string) => void;
@@ -21,6 +22,7 @@ const thirdRow = ["z", "x", "c", "v", "b", "n", "m"];
 export const Keyboard = ({
   usedLetters = [],
   correctLetters = [],
+  misplacedLetters = [],
   onDelete,
   onEnter,
   onLetter,
@@ -81,6 +83,19 @@ export const Keyboard = ({
     deleteMinWidth = "45px";
     nonLetterPadding = "6px";
   }
+  const getKeyColor = (letter: string): KeyColor => {
+    let color: KeyColor = "primary";
+    if (usedLetters.indexOf(letter) > -1) {
+      color = "secondary";
+    }
+    if (misplacedLetters.indexOf(letter) > -1) {
+      color = "warning";
+    }
+    if (correctLetters.indexOf(letter) > -1) {
+      color = "success";
+    }
+    return color;
+  };
   return (
     <div>
       <Stack
@@ -95,8 +110,7 @@ export const Keyboard = ({
             key={letter}
             text={letter}
             onClick={() => onLetter(letter)}
-            used={usedLetters.indexOf(letter) > -1}
-            correct={correctLetters.indexOf(letter) > -1}
+            color={getKeyColor(letter)}
             sx={keySx}
           />
         ))}
@@ -113,8 +127,7 @@ export const Keyboard = ({
             key={letter}
             text={letter}
             onClick={() => onLetter(letter)}
-            used={usedLetters.indexOf(letter) > -1}
-            correct={correctLetters.indexOf(letter) > -1}
+            color={getKeyColor(letter)}
             sx={keySx}
           />
         ))}
@@ -142,8 +155,7 @@ export const Keyboard = ({
             key={letter}
             text={letter}
             onClick={() => onLetter(letter)}
-            used={usedLetters.indexOf(letter) > -1}
-            correct={correctLetters.indexOf(letter) > -1}
+            color={getKeyColor(letter)}
             sx={keySx}
           />
         ))}

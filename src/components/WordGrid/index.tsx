@@ -66,17 +66,8 @@ const getHydratedData = (id?: string) => {
         // TODO: Validate actual data
         const isValidWords = Array.isArray(data?.words);
         const isValidResults = Array.isArray(data?.results);
-        // TODO: Check if the arrays are strings
-        const isValidUsedLetters = Array.isArray(data?.usedLetters);
-        const isValidCorrectLetters = Array.isArray(data?.usedLetters);
         // Only hydrate if all fields are valid
-        if (
-          isValidCurrentRow &&
-          isValidWords &&
-          isValidResults &&
-          isValidUsedLetters &&
-          isValidCorrectLetters
-        ) {
+        if (isValidCurrentRow && isValidWords && isValidResults) {
           return data;
         }
       }
@@ -131,12 +122,6 @@ export const WordGrid: FC<WordGridProps> = ({
   const [words, setWords] = useState<Words>(
     hydratedData?.words || Array(numTries).fill("")
   );
-  const [usedLetters, setUsedLetters] = useState<string[]>(
-    hydratedData?.usedLetters || []
-  );
-  const [correctLetters, setCorrectLetters] = useState<string[]>(
-    hydratedData?.correctLetters || []
-  );
   const [results, setResults] = useState<Results>(
     hydratedData?.results || Array(numTries)
   );
@@ -157,23 +142,11 @@ export const WordGrid: FC<WordGridProps> = ({
       validateWord(words[currentRow])
         .then(() => {
           const newResults = validate(words[currentRow], correctWord);
-          let correctLetters: string[] = [];
           const allCorrect = newResults.every((r) => r === Result.Correct);
-          for (let i = 0; i < newResults.length; i++) {
-            if (newResults[i] === Result.Correct) {
-              correctLetters.push(words[currentRow][i]);
-            }
-          }
           setResults((oldResults) => {
             oldResults[currentRow] = newResults;
             return oldResults;
           });
-          // No need to remove duplicates
-          setCorrectLetters((oldLetters) => [...oldLetters, ...correctLetters]);
-          setUsedLetters((oldLetters) => [
-            ...oldLetters,
-            ...words[currentRow].split(""),
-          ]);
           // Filter out empty placeholders
           const completedWords = words.filter((w) => w !== "");
           if (allCorrect) {
@@ -208,30 +181,45 @@ export const WordGrid: FC<WordGridProps> = ({
   useEffect(() => {
     // If the sessionId changed then we don't want to do this.
     if (sessionId && prevSessionId === sessionId) {
-      const data = { words, results, currentRow, usedLetters, correctLetters };
+      const data = { words, results, currentRow };
       setSessionData(sessionId, data);
     }
-  }, [
-    words,
-    results,
-    currentRow,
-    usedLetters,
-    correctLetters,
-    sessionId,
-    prevSessionId,
-  ]);
+  }, [words, results, currentRow, sessionId, prevSessionId]);
   useEffect(() => {
     // Try to hydrate from local storage
     let hydratedData = getHydratedData(sessionId);
     setWords(hydratedData?.words || Array(numTries).fill(""));
     setResults(hydratedData?.results || Array(numTries));
     setCurrentRow(hydratedData?.currentRow || 0);
-    setUsedLetters(hydratedData?.usedLetters || []);
-    setCorrectLetters(hydratedData?.correctLetters || []);
   }, [sessionId, numTries, correctWord]);
   const smallScreen = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("sm")
   );
+  // Calculated used letters, correct letters and misplaced letters for keyboard
+  const completedGuesses = words.filter(
+    (w, i) =>
+      w !== "" &&
+      // The guess is "complete" only if there is a results array with the word length
+      i in results &&
+      Array.isArray(results[i]) &&
+      results[i].length === wordLength
+  );
+  const correctLetters: Array<string> = [];
+  const usedLetters: Array<string> = [];
+  const misplacedLetters: Array<string> = [];
+  for (let i = 0; i < completedGuesses.length; i += 1) {
+    const guess = completedGuesses[i].split("");
+    for (let j = 0; j < guess.length; j += 1) {
+      const letter = guess[j];
+      if (results[i][j] === Result.Correct) {
+        correctLetters.push(letter);
+      }
+      if (results[i][j] === Result.WrongPlacement) {
+        misplacedLetters.push(letter);
+      }
+      usedLetters.push(letter);
+    }
+  }
   return (
     <>
       <Container maxWidth="sm">
@@ -279,6 +267,7 @@ export const WordGrid: FC<WordGridProps> = ({
           onLetter={onLetter}
           usedLetters={usedLetters}
           correctLetters={correctLetters}
+          misplacedLetters={misplacedLetters}
           disabled={disabled}
         />
       </Container>
