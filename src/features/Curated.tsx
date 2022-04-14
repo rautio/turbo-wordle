@@ -1,9 +1,11 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, FC } from "react";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import Container from "@mui/material/Container";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import { Theme } from "@mui/material";
 import Modal from "@mui/material/Modal";
+import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import api from "api";
@@ -61,7 +63,27 @@ const setSession = (id?: string, data?: { done: DoneState }) => {
   }
 };
 
-export const CuratedWordle = () => {
+const CenterWrapper: FC = ({ children }) => {
+  const smallScreen = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down("sm")
+  );
+  return (
+    <div
+      style={{
+        width: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: smallScreen ? "4px" : "20px",
+      }}
+    >
+      {children}
+    </div>
+  );
+};
+
+export const Curated = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const smallScreen = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("sm")
@@ -84,7 +106,6 @@ export const CuratedWordle = () => {
     },
     [id]
   );
-  // TODO: Seeing duplicate fetch calls
   useEffect(() => {
     if (id && correctWord === "") {
       setModalOpen(ModalOpen.none);
@@ -100,6 +121,23 @@ export const CuratedWordle = () => {
   }, [id, correctWord]);
   return (
     <>
+      <CenterWrapper>
+        <Button
+          color="success"
+          variant="outlined"
+          onClick={() => navigate("/create")}
+          sx={{ marginRight: "10px" }}
+        >
+          Create Your Own
+        </Button>
+        <Button
+          color="success"
+          variant="contained"
+          onClick={() => navigate("/")}
+        >
+          Practice
+        </Button>
+      </CenterWrapper>
       {done === DoneState.won && (
         <Typography
           variant="h6"
@@ -152,4 +190,4 @@ export const CuratedWordle = () => {
   );
 };
 
-export default CuratedWordle;
+export default Curated;

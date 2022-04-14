@@ -9,7 +9,7 @@ import SettingsProvider from "./contexts/settings";
 import Header from "./components/Header";
 import Practice from "./features/Practice";
 import Create from "./features/Create";
-import Wordle from "./features/Wordle";
+import Curated from "./features/Curated";
 
 export const App = () => {
   return (
@@ -19,7 +19,7 @@ export const App = () => {
         <Routes>
           <Route path="/create" element={<Create />} />
           <Route path="/create/:id" element={<Create />} />
-          <Route path="/wordle/:id" element={<Wordle />} />
+          <Route path="/word/:id" element={<Curated />} />
           <Route path="/" element={<Practice />} />
         </Routes>
       </SettingsProvider>

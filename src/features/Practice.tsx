@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, FC } from "react";
+import { useNavigate } from "react-router-dom";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Modal from "@mui/material/Modal";
 import Button from "@mui/material/Button";
@@ -47,13 +48,7 @@ const setSession = (data: { id?: string; done?: boolean }) => {
   localStorage.setItem(SESSION_ID, JSON.stringify({ ...prevData, ...data }));
 };
 
-const PlayAgain = ({
-  onClick,
-  text,
-}: {
-  onClick: () => void;
-  text?: string;
-}) => {
+const CenterWrapper: FC = ({ children }) => {
   const smallScreen = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("sm")
   );
@@ -67,21 +62,33 @@ const PlayAgain = ({
         marginTop: smallScreen ? "4px" : "20px",
       }}
     >
-      <Button
-        variant="contained"
-        color="success"
-        onClick={() => {
-          onClick();
-        }}
-        endIcon={<Replay />}
-      >
-        {text || "Play Again"}
-      </Button>
+      {children}
     </div>
+  );
+};
+const PlayAgain = ({
+  onClick,
+  text = "Play Again",
+}: {
+  onClick: () => void;
+  text?: string;
+}) => {
+  return (
+    <Button
+      variant="contained"
+      color="success"
+      onClick={() => {
+        onClick();
+      }}
+      endIcon={<Replay />}
+    >
+      {text}
+    </Button>
   );
 };
 
 export const PracticeWordle = () => {
+  const navigate = useNavigate();
   const smallScreen = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("sm")
   );
@@ -132,10 +139,20 @@ export const PracticeWordle = () => {
   }, [sessionId, correctWord, createNewSession, fetchCorrectWord]);
   return (
     <>
-      <PlayAgain
-        onClick={createNewSession}
-        text={done ? "Play Again" : "New Word"}
-      />
+      <CenterWrapper>
+        <Button
+          sx={{ marginRight: "10px" }}
+          variant="outlined"
+          color="success"
+          onClick={() => navigate("/create")}
+        >
+          Create Your Own
+        </Button>
+        <PlayAgain
+          onClick={createNewSession}
+          text={done ? "Play Again" : "New Word"}
+        />
+      </CenterWrapper>
       {correctWord && correctWord !== "" && (
         <Container sx={{ marginTop: smallScreen ? "2px" : "40px" }}>
           <WordGrid
@@ -152,7 +169,9 @@ export const PracticeWordle = () => {
       >
         <Box sx={modalStyle}>
           <div>You won!</div>
-          <PlayAgain onClick={createNewSession} />
+          <CenterWrapper>
+            <PlayAgain onClick={createNewSession} />
+          </CenterWrapper>
         </Box>
       </Modal>
       <Modal
@@ -161,7 +180,10 @@ export const PracticeWordle = () => {
       >
         <Box sx={modalStyle}>
           <div>The word was: {correctWord}</div>
-          <PlayAgain onClick={createNewSession} />
+
+          <CenterWrapper>
+            <PlayAgain onClick={createNewSession} />
+          </CenterWrapper>
         </Box>
       </Modal>
     </>

@@ -1,10 +1,10 @@
-# Turbo Wordle
+# Word Guess
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/1f8b91f8-7ee4-4503-bbfd-9574e7fa1abb/deploy-status)](https://app.netlify.com/sites/turbo-wordle/deploys)
 
 [Live Demo](https://turbo-wordle.netlify.app/)
 
-A spin on the popular [Wordle](https://www.nytimes.com/games/wordle/index.html) game owned by NY Times and created by Josh Wardle.
+A fun "guess the word" game to challenge yourself and your friends. Play in the unlimited practice mode and shuffle through as many words as you'd like. Or come up with your own word and challenge your friends.
 
 Powered by the Words API: [https://github.com/rautio/words-api](https://github.com/rautio/words-api)
 

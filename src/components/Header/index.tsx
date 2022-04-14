@@ -28,9 +28,7 @@ const modalStyle = {
   boxShadow: 24,
   p: 4,
 };
-// TODO: Create better navigation between practice and create your own
 // TODO: Add statistics
-// TODO: Add a welcome screen for new comers
 export const Header = () => {
   const navigate = useNavigate();
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -83,7 +81,7 @@ export const Header = () => {
             component="div"
             sx={{ flexGrow: 1, textAlign: "center" }}
           >
-            Turbo Wordle
+            Word Guess
           </Typography>
           <IconButton
             size="large"
@@ -116,7 +114,11 @@ export const Header = () => {
         }}
       >
         <Box sx={modalStyle}>
-          <HowToPlay />
+          <HowToPlay
+            onNavigate={() => {
+              setHowToPlayOpen(false);
+            }}
+          />
         </Box>
       </Modal>
       <Drawer

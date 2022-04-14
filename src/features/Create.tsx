@@ -63,7 +63,7 @@ export const CreateWordle = () => {
           component="div"
           sx={{ flexGrow: 1, textAlign: "center" }}
         >
-          Create your own wordle and challenge your friends
+          Create your own challenge and share with friends
         </Typography>
         <Snackbar
           anchorOrigin={{
@@ -107,7 +107,7 @@ export const CreateWordle = () => {
             variant="contained"
             color="success"
             onClick={() => {
-              navigate(`/wordle/${id}`);
+              navigate(`/word/${id}`);
             }}
             sx={{ marginRight: "10px" }}
           >
@@ -117,7 +117,7 @@ export const CreateWordle = () => {
             variant="outlined"
             color="success"
             onClick={() => {
-              const url = window.location.origin + "/wordle/" + id;
+              const url = window.location.origin + "/word/" + id;
               navigator.clipboard.writeText(url);
             }}
             endIcon={<ContentCopy />}

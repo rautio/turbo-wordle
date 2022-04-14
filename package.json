@@ -1,5 +1,5 @@
 {
-  "name": "turbo-wordle",
+  "name": "word-guess",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
