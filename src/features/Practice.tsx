@@ -116,7 +116,11 @@ export const PracticeWordle = () => {
   const createNewSession = useCallback(async () => {
     const { word } = await api.get(`/random?length=${wordLength}`);
     if (!word) return;
-    const { id } = await api.post("/guessr", { word, source: "practice" });
+    const res = await api.post("/guessr", {
+      word,
+      source: "practice",
+    });
+    const id = res?.id;
     if (!id) return;
     setSessionId(id);
     setCorrectWord(word);
@@ -126,8 +130,13 @@ export const PracticeWordle = () => {
   }, [wordLength]);
   const fetchCorrectWord = useCallback(async () => {
     if (sessionId) {
-      const { word } = await api.get(`/guessr/${sessionId}`);
-      setCorrectWord(word);
+      const res = await api.get(`/guessr/${sessionId}`).catch(() => {
+        // If this call failed it means the id doesn't exist and we need to start from scratch
+        setSessionId(undefined);
+      });
+      if (res?.word) {
+        setCorrectWord(res.word);
+      }
     }
   }, [sessionId]);
   useEffect(() => {
