@@ -17,11 +17,11 @@ const validateWord = (word: string) => {
   return api.get(`/word/${word}`);
 };
 
-const createWordle = (word: string) => {
-  return api.post(`/wordle`, { word, source: "curated" });
+const createGuessr = (word: string) => {
+  return api.post(`/guessr`, { word, source: "curated" });
 };
 
-export const CreateWordle = () => {
+export const CreateCurated = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const maxWordLength = 9;
@@ -37,7 +37,7 @@ export const CreateWordle = () => {
     if (word.length > 2 && word.length < 10) {
       validateWord(word)
         .then(async () => {
-          const res = await createWordle(word);
+          const res = await createGuessr(word);
           if (res?.id) {
             navigate(`/create/${res.id}`);
           }
@@ -141,4 +141,4 @@ export const CreateWordle = () => {
   );
 };
 
-export default CreateWordle;
+export default CreateCurated;

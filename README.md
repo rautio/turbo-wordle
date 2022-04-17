@@ -1,8 +1,8 @@
 # Word Guess
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/1f8b91f8-7ee4-4503-bbfd-9574e7fa1abb/deploy-status)](https://app.netlify.com/sites/turbo-wordle/deploys)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/1f8b91f8-7ee4-4503-bbfd-9574e7fa1abb/deploy-status)](https://app.netlify.com/sites/word-guessr/deploys)
 
-[Live Demo](https://turbo-wordle.netlify.app/)
+[Live Demo](https://word-guessr.netlify.app/)
 
 A fun "guess the word" game to challenge yourself and your friends. Play in the unlimited practice mode and shuffle through as many words as you'd like. Or come up with your own word and challenge your friends.
 

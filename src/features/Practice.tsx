@@ -105,8 +105,8 @@ export const PracticeWordle = () => {
       setModalOpen(success ? ModalOpen.won : ModalOpen.fail);
       setDone(true);
       setSession({ done: true });
-      api.post("/wordle-session", {
-        wordle_id: sessionId,
+      api.post("/guessr-session", {
+        guessr_id: sessionId,
         correct: success,
         guesses: JSON.stringify(words),
       });
@@ -116,7 +116,7 @@ export const PracticeWordle = () => {
   const createNewSession = useCallback(async () => {
     const { word } = await api.get(`/random?length=${wordLength}`);
     if (!word) return;
-    const { id } = await api.post("/wordle", { word, source: "practice" });
+    const { id } = await api.post("/guessr", { word, source: "practice" });
     if (!id) return;
     setSessionId(id);
     setCorrectWord(word);
@@ -126,7 +126,7 @@ export const PracticeWordle = () => {
   }, [wordLength]);
   const fetchCorrectWord = useCallback(async () => {
     if (sessionId) {
-      const { word } = await api.get(`/wordle/${sessionId}`);
+      const { word } = await api.get(`/guessr/${sessionId}`);
       setCorrectWord(word);
     }
   }, [sessionId]);

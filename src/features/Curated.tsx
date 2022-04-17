@@ -98,8 +98,8 @@ export const Curated = () => {
       setModalOpen(success ? ModalOpen.won : ModalOpen.fail);
       setSession(id, { done: doneState });
       setDone(doneState);
-      api.post("/wordle-session", {
-        wordle_id: id,
+      api.post("/guessr-session", {
+        guessr_id: id,
         correct: success,
         guesses: JSON.stringify(words),
       });
@@ -110,7 +110,7 @@ export const Curated = () => {
     if (id && correctWord === "") {
       setModalOpen(ModalOpen.none);
       api
-        .get(`/wordle/${id}`)
+        .get(`/guessr/${id}`)
         .then((res) => {
           setCorrectWord(res.word);
         })

@@ -1,6 +1,6 @@
 {
-  "short_name": "Turbo World",
-  "name": "Spin on the popular Wordle game",
+  "short_name": "Word Guessr",
+  "name": "Word guess game.",
   "icons": [
     {
       "src": "favicon.ico",
